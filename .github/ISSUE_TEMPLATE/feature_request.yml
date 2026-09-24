@@ -1,0 +1,20 @@
+name: Feature idea
+description: Something Unbox Box could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to see?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: What would you use it for?
+      description: The question it would answer helps us most.
+  - type: textarea
+    id: data
+    attributes:
+      label: Is the data available?
+      description: If it needs data we don't have yet, where could it come from, and under what licence?

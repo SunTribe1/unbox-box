@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+*.tsbuildinfo
+
+# Generated at build time (scripts/headers.mjs); vercel.json and _headers are committed
+apps/web/public/serve.json
+
+# Test and coverage output
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# Secrets and local settings: never commit keys. See apps/web/.env.example.
+.env
+.env.*
+!.env.example
+
+# Data built by the pipeline (published to the Hugging Face dataset, not the repo).
+# The bundled demo lives in apps/web/public/data and is committed.
+/data/
+
+# Python
+pipeline/.venv/
+pipeline/.cache/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Private working notes (research, plans); the public docs are docs/adr and docs/*.md
+docs/research/
+docs/superpowers/
+
+# Files AI coding tools write for themselves
+apps/web/AGENTS.md
+apps/web/CLAUDE.md
+CLAUDE.md
+AGENTS.md
+.claude/
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Logs, caches and scratch files
+*.log
+npm-debug.log*
+.eslintcache
+.cspellcache
+*.tmp
+*.tar.gz
+*.zip

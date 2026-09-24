@@ -1,0 +1,50 @@
+name: Sync session data
+
+# Builds every session TracingInsights has published that isn't on the Hugging Face dataset
+# yet, then uploads it. TracingInsights publishes within about 3 hours of a session, so
+# checking every 3 hours means new data lands within ~6 hours at worst.
+#
+# Setup (once): add repository secret HF_TOKEN (a Hugging Face write token) and repository
+# variable HF_DATASET (e.g. your-name/unbox-box-data).
+
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild sessions that are already published
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-data
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Sync and publish
+        working-directory: pipeline
+        env:
+          HF_DATASET: ${{ vars.HF_DATASET }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: >
+          uv run --with huggingface_hub unbox-box-pipeline sync
+          --seasons 2023-2026
+          --published-index "https://huggingface.co/datasets/$HF_DATASET/resolve/main/index.json"
+          --publish "$HF_DATASET"
+          $FORCE
+      - name: Report
+        if: always()
+        run: cat data/sync-report.json 2>/dev/null || echo "no report"

@@ -1,0 +1,48 @@
+name: Build session data
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: Season
+        default: '2025'
+      event:
+        description: Event name, e.g. Italian Grand Prix
+        required: true
+      session:
+        description: Session, e.g. Qualifying
+        default: Qualifying
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      # Inputs reach the shell through env vars, never ${{ }} inside `run`, so a crafted
+      # event name can't inject commands.
+      - name: Build data
+        working-directory: pipeline
+        env:
+          SEASON: ${{ inputs.season }}
+          EVENT: ${{ inputs.event }}
+          SESSION: ${{ inputs.session }}
+        run: >
+          uv run unbox-box-pipeline build
+          --season "$SEASON"
+          --event "$EVENT"
+          --session "$SESSION"
+      - name: Commit data
+        env:
+          SEASON: ${{ inputs.season }}
+          EVENT: ${{ inputs.event }}
+          SESSION: ${{ inputs.session }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/data
+          git diff --cached --quiet || git commit -m "data: $SEASON $EVENT $SESSION"
+          git push

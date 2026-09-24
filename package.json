@@ -1,0 +1,44 @@
+{
+  "name": "unbox-box",
+  "private": true,
+  "version": "0.1.0",
+  "description": "An F1 analysis web app an AI agent can drive. Unofficial fan project.",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @unbox-box/web",
+    "build": "npm run build -w @unbox-box/web",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write .",
+    "data": "cd pipeline && uv run unbox-box-pipeline build --season 2025 --event \"Italian Grand Prix\" --session Qualifying --out ../apps/web/public/data && uv run unbox-box-pipeline build --season 2025 --event \"Italian Grand Prix\" --session Race --out ../apps/web/public/data",
+    "data:sync": "cd pipeline && uv run unbox-box-pipeline sync",
+    "data:publish": "cd pipeline && uv run --with huggingface_hub unbox-box-pipeline publish",
+    "data:serve": "serve data --cors -l 4100 --no-clipboard",
+    "dev:full": "npm run data:serve & NEXT_PUBLIC_DATA_BASE=http://localhost:4100 npm run dev",
+    "format:check": "prettier --check .",
+    "spell": "cspell --no-progress --gitignore \"**/*.{ts,tsx,md,py,json,css,mjs}\"",
+    "knip": "knip --no-progress",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "test:e2e": "npm run test:e2e -w @unbox-box/web",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run spell && npm run knip && npm test"
+  },
+  "devDependencies": {
+    "@cspell/dict-en-gb": "^5.0.34",
+    "@eslint/js": "^9.39.1",
+    "cspell": "^10.3.4",
+    "eslint": "^9.39.5",
+    "knip": "^6.38.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.70.1"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
