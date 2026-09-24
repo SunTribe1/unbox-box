@@ -1,0 +1,37 @@
+{
+  "slug": "monza",
+  "name": "Autodromo Nazionale Monza",
+  "locality": "Monza",
+  "country": "Italy",
+  "corners": {
+    "1": "Variante del Rettifilo",
+    "2": "Variante del Rettifilo",
+    "3": "Curva Biassono",
+    "4": "Variante della Roggia",
+    "5": "Variante della Roggia",
+    "6": "Prima di Lesmo",
+    "7": "Seconda di Lesmo",
+    "8": "Variante Ascari",
+    "9": "Variante Ascari",
+    "10": "Variante Ascari",
+    "11": "Curva Alboreto"
+  },
+  "aliases": {
+    "rettifilo": 1,
+    "first chicane": 1,
+    "curva grande": 3,
+    "biassono": 3,
+    "roggia": 4,
+    "second chicane": 4,
+    "lesmo 1": 6,
+    "lesmo one": 6,
+    "first lesmo": 6,
+    "lesmo 2": 7,
+    "lesmo two": 7,
+    "second lesmo": 7,
+    "lesmo": 6,
+    "ascari": 8,
+    "parabolica": 11,
+    "alboreto": 11
+  }
+}
