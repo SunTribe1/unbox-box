@@ -1,0 +1,21 @@
+{
+  "name": "@unbox-box/webmcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "The only module that touches the WebMCP API (document.modelContext). Isolates spec churn.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.1"
+  },
+  "sideEffects": false
+}
