@@ -30,7 +30,7 @@ Then build the app with
 `NEXT_PUBLIC_DATA_BASE=https://huggingface.co/datasets/your-name/unbox-box-data/resolve/main`.
 Hugging Face deduplicates uploads, so republishing only sends changed files.
 
-`.github/workflows/sync-data.yml` does both every three hours once the repo is on GitHub
+`.github/workflows/sync-data.yml` does both every three hours on race weekends (daily midweek) once the repo is on GitHub
 (needs the `HF_TOKEN` secret and `HF_DATASET` variable). It passes `--published-index` so a
 fresh runner treats everything already on Hugging Face as built.
 

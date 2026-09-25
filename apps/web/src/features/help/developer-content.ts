@@ -144,7 +144,7 @@ export const FLOW: { step: string; detail: string }[] = [
   {
     step: 'Publish',
     detail:
-      'A scheduled GitHub Action (every three hours) builds anything new and uploads it to a Hugging Face dataset.',
+      'A scheduled GitHub Action (every three hours on race weekends, daily midweek) builds anything new and uploads it to a Hugging Face dataset.',
   },
   {
     step: 'Load',

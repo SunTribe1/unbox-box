@@ -15,7 +15,8 @@ The budget is still $0.
   built yet, then rebuilds `index.json` from the session folders.
 - The archive lives in a public Hugging Face dataset. The app reads it through
   `NEXT_PUBLIC_DATA_BASE`; its `resolve/main` URLs are CORS-enabled and CDN-backed.
-- A scheduled GitHub Action runs the sync every three hours. It reads the live `index.json`
+- A scheduled GitHub Action runs the sync every three hours on race weekends (Friday to
+  Monday, UTC) and once a day midweek. It reads the live `index.json`
   first, so a fresh runner only builds what's new.
 - The bundled Monza 2025 files stay in `apps/web/public/data` as the offline demo and the
   test fixture.

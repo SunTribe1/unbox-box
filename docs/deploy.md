@@ -73,7 +73,8 @@ too big for Git, so it lives in a free public Hugging Face dataset.
 4. To keep it current automatically, add the token as a repository **secret** `HF_TOKEN` and
    the dataset name as a repository **variable** `HF_DATASET` (Settings → Secrets and
    variables → Actions). The [Sync session data](../.github/workflows/sync-data.yml) workflow
-   then publishes new sessions every three hours.
+   then publishes new sessions every three hours on race weekends (Friday to Monday, UTC)
+   and once a day midweek.
 
 The site reads it from
 `https://huggingface.co/datasets/your-name/unbox-box-data/resolve/main`. That host is already
