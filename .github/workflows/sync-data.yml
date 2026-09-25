@@ -1,15 +1,20 @@
 name: Sync session data
 
 # Builds every session TracingInsights has published that isn't on the Hugging Face dataset
-# yet, then uploads it. TracingInsights publishes within about 3 hours of a session, so
-# checking every 3 hours means new data lands within ~6 hours at worst.
+# yet, then uploads it. TracingInsights publishes within about 3 hours of a session.
+#
+# Schedule (UTC): every 3 hours Friday to Monday, when sessions run (late races in the
+# Americas end on Sunday night or Monday UTC), so new data lands within ~6 hours; once a day
+# Tuesday to Thursday for late or corrected uploads and the post-race F1DB update. No
+# calendar is hard-coded: each run builds only what's new, so a quiet run takes a minute.
 #
 # Setup (once): add repository secret HF_TOKEN (a Hugging Face write token) and repository
 # variable HF_DATASET (e.g. your-name/unbox-box-data).
 
 on:
   schedule:
-    - cron: '17 */3 * * *'
+    - cron: '17 */3 * * 5,6,0,1'
+    - cron: '17 6 * * 2,3,4'
   workflow_dispatch:
     inputs:
       force:
