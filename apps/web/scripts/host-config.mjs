@@ -17,6 +17,12 @@ writeFileSync(
   here('vercel.json'),
   json({
     $schema: 'https://openapi.vercel.sh/vercel.json',
+    // Serve the export as plain static files. Under the Next.js preset Vercel applies its own
+    // Next.js routing and ignores these rewrites for a static export (ADR 0008).
+    framework: null,
+    buildCommand: 'npm run build',
+    outputDirectory: 'out',
+    trailingSlash: true,
     rewrites: vercelRewrites(),
     headers: [{ source: '/(.*)', headers: pairs(production) }],
   }),

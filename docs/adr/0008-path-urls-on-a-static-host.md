@@ -17,10 +17,12 @@ tens of thousands, and new sessions arrive every weekend.
 - What a page shows goes in the path; view settings stay in the query:
   `/duel/2026-italian-grand-prix-r/ANT-53-vs-RUS-51/?corner=10`,
   `/races/1988/3/qualifying/`, `/history/drivers/ayrton-senna/`, `/engines/tyres/pirelli/`.
-- Each host rewrites `/<view>/*` to the view's page (`/<view>` on Vercel, `/<view>/index.html`
-  elsewhere), and the app reads the rest of the path
+- Each host rewrites `/<view>/*` to the view's page (`/<view>/index.html`), and the app reads the rest of the path
   on load (`apps/web/src/lib/routes.ts`). Real files always win, so Next.js's own
   `/<view>/__next.*.txt` files and assets are unaffected.
+- Vercel serves the export as plain static files (`"framework": null`, output `out`, in
+  `vercel.json`). Under its Next.js preset Vercel applies its own Next.js routing and ignores
+  `vercel.json` rewrites for a static export, so every deep link returned 404.
 - One script (`apps/web/scripts/host-config.mjs`) writes the rewrites for Vercel
   (`vercel.json`), Netlify and Cloudflare Pages (`_redirects`) and `serve` (`serve.json`, used by
   the Playwright suite), from the list of view slugs in `scripts/host-routes.mjs`. A unit test
