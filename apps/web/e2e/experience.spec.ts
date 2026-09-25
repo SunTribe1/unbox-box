@@ -10,7 +10,7 @@ test('the session picker switches sessions', async ({ page }) => {
   // Keyboard path: search names the session, Enter opens it.
   await page.getByLabel('Search sessions').fill('2025 italian race')
   await page.keyboard.press('Enter')
-  await expect(page).toHaveURL(/s=2025-italian-grand-prix-r/)
+  await expect(page).toHaveURL(/\/2025-italian-grand-prix-r\//)
 })
 
 test('? opens the keyboard shortcuts', async ({ page, isMobile }) => {
@@ -33,7 +33,7 @@ test('the share menu copies a deep link', async ({ page, context, browserName })
   await page.getByRole('menuitem', { name: 'Copy link' }).click()
   await expect(page.getByText('Link copied')).toBeVisible()
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
-    's=2025-italian-grand-prix-q',
+    '/duel/2025-italian-grand-prix-q/',
   )
 })
 
@@ -77,54 +77,64 @@ test('the docked Race Engineer hides, stays hidden, and comes back', async ({ pa
 })
 
 test('views have their own paths, and Back returns to the previous view', async ({ page }) => {
-  await page.goto(`/duel/?s=2025-italian-grand-prix-q&a=LEC-16&b=HAM-16&corner=11`)
+  const duel = '/duel/2025-italian-grand-prix-q/LEC-16-vs-HAM-16/?corner=11'
+  await page.goto(duel)
   await expect(page.getByRole('combobox', { name: 'Driver A', exact: true })).toContainText('LEC')
-  await expect(page).toHaveURL(/\/duel\/\?s=2025-italian-grand-prix-q&a=LEC-16&b=HAM-16&corner=11/)
-  await page.goto('/history/?s=2025-italian-grand-prix-q')
+  await expect(page).toHaveURL(new RegExp(`${duel.replace(/[?]/g, '\\?')}$`))
+  await page.goto('/history/')
   await expect(page.getByRole('tab', { name: /Drivers/ })).toBeVisible()
   await page.getByRole('tab', { name: /Drivers/ }).click()
-  await expect(page).toHaveURL(/\/history\/\?s=2025-italian-grand-prix-q&section=drivers/)
+  await expect(page).toHaveURL(/\/history\/drivers\/$/)
+  await page.goBack()
+  await expect(page).toHaveURL(/\/duel\/2025-italian-grand-prix-q\/LEC-16-vs-HAM-16\//)
+})
+
+test('older query links still open the same page', async ({ page }) => {
+  await page.goto('/duel/?s=2025-italian-grand-prix-q&a=LEC-16&b=HAM-16&corner=11')
+  await expect(page).toHaveURL(/\/duel\/2025-italian-grand-prix-q\/LEC-16-vs-HAM-16\/\?corner=11$/)
+  await page.goto('/races/?season=1988&round=3')
+  await expect(page).toHaveURL(/\/races\/1988\/3\/$/)
 })
 
 test('circuit pages open from a link', async ({ page }) => {
-  await page.goto('/circuits/?circuit=monza')
+  await page.goto('/circuits/monza/')
   await expect(page.getByRole('heading', { name: 'Monza', exact: true })).toBeVisible()
   await expect(page.getByText('Lap record').first()).toBeVisible()
   await page.getByRole('button', { name: /All circuits/ }).click()
   await expect(page.getByLabel('Search circuits')).toBeVisible()
-  await expect(page).toHaveURL(/\/circuits\/\?s=[^&]+$/)
+  await expect(page).toHaveURL(/\/circuits\/$/)
   await page.goBack()
-  await expect(page).toHaveURL(/circuit=monza/)
+  await expect(page).toHaveURL(/\/circuits\/monza\/$/)
 })
 
 test('race archive opens a weekend and every session tab', async ({ page }) => {
-  await page.goto('/races/?season=1988')
+  await page.goto('/races/1988/')
   await expect(page.getByRole('heading', { name: /1988 season/ })).toBeVisible()
   await page.getByRole('tab', { name: /Calendar/ }).click()
   await page.getByRole('button', { name: /Monaco Grand Prix/ }).click()
-  await expect(page).toHaveURL(/\/races\/\?s=[^&]+&season=1988&round=3/)
+  await expect(page).toHaveURL(/\/races\/1988\/3\/$/)
   await expect(page.getByRole('heading', { name: 'Monaco Grand Prix' })).toBeVisible()
   await page.getByRole('tab', { name: 'Qualifying', exact: true }).click()
-  await expect(page).toHaveURL(/session=qualifying/)
+  await expect(page).toHaveURL(/\/races\/1988\/3\/qualifying\/$/)
   await expect(page.getByRole('cell', { name: '1:23.998' })).toBeVisible()
   await page.goBack()
   await expect(page.getByRole('heading', { name: /1988 season/ })).toBeVisible()
 })
 
 test('record book, engines and nations link to each other', async ({ page }) => {
-  await page.goto('/records/?scope=teams&era=1990s')
+  await page.goto('/records/teams/?era=1990s')
   await expect(page.getByRole('heading', { name: 'Wins', exact: true })).toBeVisible()
   await expect(page.getByRole('button', { name: /Williams/ }).first()).toBeVisible()
-  await page.goto('/engines/?maker=honda')
+  await page.goto('/engines/honda/')
   await expect(page.getByRole('heading', { name: 'Honda', exact: true })).toBeVisible()
   await expect(page.getByText('Constructors’ titles powered')).toBeVisible()
-  await page.goto('/nations/?nation=nl')
+  await page.goto('/nations/nl/')
   await expect(page.getByRole('heading', { name: 'Netherlands', exact: true })).toBeVisible()
   await page
     .getByRole('button', { name: /Max Verstappen/ })
     .first()
     .click()
-  await expect(page).toHaveURL(/\/history\/\?s=[^&]+&section=drivers&driver=max-verstappen/)
+  await expect(page).toHaveURL(/\/history\/drivers\/max-verstappen\/$/)
   await expect(page.getByText(/Family in F1/)).toBeVisible()
 })
 
@@ -145,7 +155,7 @@ test('help explains every section and the report form validates', async ({ page 
 
 test('old History seasons links open the Race Archive championship', async ({ page }) => {
   await page.goto('/history/?section=seasons&season=2021')
-  await expect(page).toHaveURL(/\/races\/\?s=[^&]+&season=2021/)
+  await expect(page).toHaveURL(/\/races\/2021\/$/)
   await expect(page.getByRole('tab', { name: /Championship/ })).toHaveAttribute(
     'data-state',
     'active',

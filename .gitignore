@@ -6,7 +6,7 @@ node_modules/
 out/
 *.tsbuildinfo
 
-# Generated at build time (scripts/headers.mjs); vercel.json and _headers are committed
+# Generated at build time (scripts/host-config.mjs); vercel.json, _headers and _redirects are committed
 apps/web/public/serve.json
 
 # Test and coverage output

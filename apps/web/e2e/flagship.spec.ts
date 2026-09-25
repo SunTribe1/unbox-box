@@ -25,7 +25,7 @@ test('the Race Engineer answers the flagship question and drives the UI', async 
   await input.fill('Where did Piastri lose time to Norris?')
   await input.press('Enter')
   await expect(page.getByText(/Oscar Piastri was 0\.113s slower than Lando Norris/)).toBeVisible()
-  await expect(page).toHaveURL(/a=NOR.*b=PIA/)
+  await expect(page).toHaveURL(/\/NOR-\d+-vs-PIA-\d+\//)
   await expect(page.getByText('1:18.982').first()).toBeVisible()
 })
 
@@ -81,7 +81,7 @@ test('the Race Engineer answers all-time questions', async ({ page, isMobile }) 
   if (isMobile) await page.getByRole('button', { name: 'Open Race Engineer' }).click()
   await input.fill('most wins in the 90s')
   await input.press('Enter')
-  await expect(page).toHaveURL(/\/records\/\?s=[^&]+&board=wins&era=1990-1999/)
+  await expect(page).toHaveURL(/\/records\/drivers\/wins\/\?era=1990-1999$/)
   if (isMobile) await page.getByRole('button', { name: 'Close Race Engineer' }).last().click()
   await expect(page.getByRole('list', { name: 'Wins leaderboard' })).toContainText(
     'Michael Schumacher',

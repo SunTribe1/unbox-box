@@ -1,4 +1,47 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/duel/:path+",
+      "destination": "/duel/index.html"
+    },
+    {
+      "source": "/replay/:path+",
+      "destination": "/replay/index.html"
+    },
+    {
+      "source": "/strategy/:path+",
+      "destination": "/strategy/index.html"
+    },
+    {
+      "source": "/history/:path+",
+      "destination": "/history/index.html"
+    },
+    {
+      "source": "/circuits/:path+",
+      "destination": "/circuits/index.html"
+    },
+    {
+      "source": "/races/:path+",
+      "destination": "/races/index.html"
+    },
+    {
+      "source": "/records/:path+",
+      "destination": "/records/index.html"
+    },
+    {
+      "source": "/engines/:path+",
+      "destination": "/engines/index.html"
+    },
+    {
+      "source": "/nations/:path+",
+      "destination": "/nations/index.html"
+    },
+    {
+      "source": "/help/:path+",
+      "destination": "/help/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

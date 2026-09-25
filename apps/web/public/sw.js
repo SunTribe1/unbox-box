@@ -3,12 +3,14 @@
  *  - build assets (/_next/static, fonts, icons): cache first (content-hashed, never change)
  *  - data JSON (session files, history): stale-while-revalidate, so it's instant and
  *    refreshes in the background; index.json is network first so new sessions appear
- *  - pages: network first, falling back to the cached shell when offline
+ *  - pages: network first, falling back to the cached shell when offline. Every path under a
+ *    view (/duel/…/…/) is the same page, so it is cached once, under the view's root.
  */
-const VERSION = 'v2'
-const STATIC = `pw-static-${VERSION}`
-const DATA = `pw-data-${VERSION}`
-const PAGES = `pw-pages-${VERSION}`
+const VERSION = 'v3'
+const PREFIX = 'unboxbox-'
+const STATIC = `${PREFIX}static-${VERSION}`
+const DATA = `${PREFIX}data-${VERSION}`
+const PAGES = `${PREFIX}pages-${VERSION}`
 const DATA_LIMIT = 400 // entries; oldest evicted first
 // The data host (NEXT_PUBLIC_DATA_BASE), passed as ?data=<origin> at registration. Only this
 // origin and our own are cached; every other cross-origin request passes straight through.
@@ -30,7 +32,8 @@ self.addEventListener('activate', (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter((k) => k.startsWith('pw-') && !k.endsWith(VERSION))
+            // pw- is the name caches had before the rename.
+            .filter((k) => (k.startsWith(PREFIX) || k.startsWith('pw-')) && !k.endsWith(VERSION))
             .map((k) => caches.delete(k)),
         ),
       )
@@ -72,20 +75,21 @@ async function staleWhileRevalidate(event) {
   return network
 }
 
-async function networkFirst(request, cacheName) {
+async function networkFirst(request, cacheName, key = request) {
   const cache = await caches.open(cacheName)
   try {
     const response = await fetch(request)
-    if (response.ok) await cache.put(request, response.clone())
+    if (response.ok) await cache.put(key, response.clone())
     return response
   } catch {
-    // Pages are the same app whatever the query (?s=…&a=…), so match on the path alone.
-    return (
-      (await cache.match(request, { ignoreSearch: request.mode === 'navigate' })) ||
-      (await cache.match('/')) ||
-      Response.error()
-    )
+    return (await cache.match(key)) || (await cache.match('/')) || Response.error()
   }
+}
+
+/** /duel/2026-…/NOR-49-vs-ANT-59/?corner=10 → /duel/: the page every path under a view serves. */
+function pageKey(url) {
+  const first = url.pathname.split('/').find(Boolean)
+  return first && !first.includes('.') ? `${url.origin}/${first}/` : `${url.origin}/`
 }
 
 self.addEventListener('fetch', (event) => {
@@ -104,6 +108,6 @@ self.addEventListener('fetch', (event) => {
   } else if (url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/icons/')) {
     event.respondWith(cacheFirst(request))
   } else if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, PAGES))
+    event.respondWith(networkFirst(request, PAGES, pageKey(url)))
   }
 })

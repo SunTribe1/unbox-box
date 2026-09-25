@@ -10,19 +10,22 @@ import {
 } from '@unbox-box/tools'
 
 /**
- * The app's URLs. Each view has a path, and only the parameters that view needs go in the
- * query, spelled out:
+ * The app's URLs. What a page shows goes in the path; view settings go in the query:
  *
- *   /duel/?s=2026-dutch-grand-prix-r&a=NOR-49&b=ANT-59&corner=10&traces=speed,throttle
- *   /replay/?s=2026-dutch-grand-prix-r&at=1834&follow=NOR
- *   /history/?section=drivers&driver=michael-schumacher
- *   /circuits/?circuit=zandvoort
- *   /races/?season=1988&round=3&session=qualifying
- *   /records/?scope=teams&board=wins&era=1990s
- *   /engines/?kind=tyre&maker=pirelli
- *   /nations/?nation=nl
+ *   /duel/2026-dutch-grand-prix-r/NOR-49-vs-ANT-59/?corner=10&traces=speed,throttle
+ *   /replay/2026-dutch-grand-prix-r/?at=1834&follow=NOR
+ *   /strategy/2026-dutch-grand-prix-r/
+ *   /history/drivers/michael-schumacher/
+ *   /history/head-to-head/max-verstappen-vs-lando-norris/
+ *   /circuits/zandvoort/
+ *   /races/1988/3/qualifying/
+ *   /records/teams/wins/?era=1990s
+ *   /engines/honda/  ·  /engines/tyres/pirelli/
+ *   /nations/nl/
  *
- * Links made before these paths existed (?v=lap-duel&la=49&t=...) still open correctly.
+ * The site is a static export with one page per view, so the host rewrites deeper paths to
+ * the view's page (scripts/security-policy.mjs). Older links (/duel/?s=…&a=…, ?v=lap-duel&la=…)
+ * still open correctly.
  */
 
 export const VIEW_SLUG: Record<View, string> = {
@@ -37,10 +40,7 @@ export const VIEW_SLUG: Record<View, string> = {
   nations: 'nations',
   help: 'help',
 }
-const SLUG_VIEW = Object.fromEntries(Object.entries(VIEW_SLUG).map(([v, s]) => [s, v])) as Record<
-  string,
-  View
->
+const SLUG_VIEW = new Map(Object.entries(VIEW_SLUG).map(([v, s]) => [s, v as View]))
 
 /** Friendlier names for traces in links ("gap" rather than the internal "delta"). */
 const TRACE_SLUG: Partial<Record<Trace, string>> = { delta: 'gap' }
@@ -96,18 +96,112 @@ export function parseRoute(pathname: string, search: string): RouteState {
   return route
 }
 
+/** Ids in paths: letters, digits and dashes only, so nothing odd reaches the app. */
+const ID = /^[a-z0-9-]{1,80}$/i
+const id = (v: string | null | undefined) => (v && ID.test(v) ? v : undefined)
+const isNumber = (v: string | undefined) => v != null && /^\d+$/.test(v)
+
+function decode(segment: string): string {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return ''
+  }
+}
+
+/** The view and the path segments after it. One-page builds carry both in the query. */
+function viewAndSegments(pathname: string, p: URLSearchParams) {
+  const segments = pathname.split('/').filter(Boolean).map(decode)
+  const at = segments.findIndex((s) => SLUG_VIEW.has(s))
+  if (at >= 0) return { view: SLUG_VIEW.get(segments[at]!), rest: segments.slice(at + 1) }
+  const legacy = p.get('v') ?? p.get('view')
+  const view =
+    legacy && (VIEWS as readonly string[]).includes(legacy)
+      ? (legacy as View)
+      : legacy
+        ? SLUG_VIEW.get(legacy)
+        : undefined
+  return { view, rest: (p.get('path') ?? '').split('/').filter(Boolean) }
+}
+
+/** "NOR-49-vs-ANT-59" → both drivers and laps. */
+const DUEL_PAIR = /^([a-z]{3})-(\d+)-vs-([a-z]{3})-(\d+)$/i
+
+/** What each view keeps in its path, read back. */
+function parsePath(view: View | undefined, rest: string[]): RouteState {
+  const [first, second, third] = rest
+  switch (view) {
+    case 'lap-duel': {
+      const m = second ? DUEL_PAIR.exec(second) : null
+      const duel = m
+        ? { a: m[1]!.toUpperCase(), lapA: Number(m[2]), b: m[3]!.toUpperCase(), lapB: Number(m[4]) }
+        : undefined
+      return { sessionId: id(first), ...(duel && { duel }) }
+    }
+    case 'replay':
+    case 'strategy':
+      return { sessionId: id(first) }
+    case 'history': {
+      if (first === 'drivers' || first === 'teams') {
+        const key = first === 'drivers' ? 'driver' : 'team'
+        return { history: { tab: first, ...(id(second) && { [key]: second }) } }
+      }
+      const [a, b] = first === 'head-to-head' ? (second ?? '').split('-vs-') : []
+      return first === 'head-to-head'
+        ? { history: { tab: first, ...(id(a) && id(b) && { a, b }) } }
+        : {}
+    }
+    case 'circuits':
+      return { circuit: id(first) }
+    case 'races': {
+      if (!isNumber(first)) return { archive: pick({ section: id(first) }) }
+      const round = isNumber(second) ? second : undefined
+      return {
+        archive: pick({
+          season: positiveInt(first!),
+          round: positiveInt(round ?? null),
+          ...(round ? { session: id(third) } : { section: id(second) }),
+        }),
+      }
+    }
+    case 'records':
+      return { archive: pick({ scope: id(first), board: id(second) }) }
+    case 'engines':
+      return first === 'tyres'
+        ? { archive: pick({ kind: 'tyre', maker: id(second) }) }
+        : { archive: pick({ maker: id(first) }) }
+    case 'nations':
+      return {
+        archive: pick({
+          nation: /^[a-z]{2}$/i.test(first ?? '') ? first!.toUpperCase() : undefined,
+        }),
+      }
+    default:
+      return {}
+  }
+}
+
+const pick = <T extends object>(o: T): Partial<T> =>
+  Object.fromEntries(Object.entries(o).filter(([, v]) => v != null)) as Partial<T>
+
 function parseRawRoute(pathname: string, search: string): RouteState {
   const p = new URLSearchParams(search)
-  const slug = pathname.split('/').filter(Boolean).at(-1) ?? ''
-  const legacyView = p.get('v') ?? p.get('view')
-  const view =
-    SLUG_VIEW[slug] ??
-    (legacyView && (VIEWS as readonly string[]).includes(legacyView)
-      ? (legacyView as View)
-      : legacyView
-        ? SLUG_VIEW[legacyView]
-        : undefined)
+  const { view, rest } = viewAndSegments(pathname, p)
+  const query = parseQuery(p)
+  const path = parsePath(view, rest)
+  // The path wins; the query fills in settings and older links.
+  return {
+    ...query,
+    view,
+    sessionId: path.sessionId ?? query.sessionId,
+    duel: { ...query.duel, ...path.duel },
+    history: { ...query.history, ...pick(path.history ?? {}) },
+    circuit: path.circuit ?? query.circuit,
+    archive: { ...query.archive, ...path.archive },
+  }
+}
 
+function parseQuery(p: URLSearchParams): RouteState {
   const a = driverLap(p.get('a'))
   const b = driverLap(p.get('b'))
   const traces = (p.get('traces') ?? p.get('t'))
@@ -117,8 +211,7 @@ function parseRawRoute(pathname: string, search: string): RouteState {
   const tab = p.get('section') ?? p.get('ht')
   const pair = p.get('pair')?.split(',')
   return {
-    view,
-    sessionId: p.get('s') ?? undefined,
+    sessionId: id(p.get('s')),
     duel: {
       a: a.code,
       b: b.code,
@@ -132,13 +225,13 @@ function parseRawRoute(pathname: string, search: string): RouteState {
     history: {
       tab:
         tab && (HISTORY_TABS as readonly string[]).includes(tab) ? (tab as HistoryTab) : undefined,
-      driver: p.get('driver') ?? p.get('hd') ?? undefined,
-      team: p.get('team') ?? p.get('hc') ?? undefined,
+      driver: id(p.get('driver') ?? p.get('hd')),
+      team: id(p.get('team') ?? p.get('hc')),
       season: positiveInt(p.get('season') ?? p.get('hy')),
-      a: pair?.[0] || undefined,
-      b: pair?.[1] || undefined,
+      a: id(pair?.[0]),
+      b: id(pair?.[1]),
     },
-    circuit: p.get('circuit') ?? undefined,
+    circuit: id(p.get('circuit')),
     archive: parseArchive(p),
   }
 }
@@ -151,7 +244,7 @@ function parseArchive(p: URLSearchParams): Partial<ArchiveInputs> {
   }
   const kind = p.get('kind')
   const nation = word('nation')
-  const out: Partial<ArchiveInputs> = {
+  return pick({
     season: positiveInt(p.get('season')),
     round: positiveInt(p.get('round')),
     session: word('session'),
@@ -162,8 +255,7 @@ function parseArchive(p: URLSearchParams): Partial<ArchiveInputs> {
     kind: kind === 'engine' || kind === 'tyre' ? kind : undefined,
     maker: word('maker'),
     nation: nation?.length === 2 ? nation.toUpperCase() : undefined,
-  }
-  return Object.fromEntries(Object.entries(out).filter(([, v]) => v != null))
+  })
 }
 
 export interface RouteInput {
@@ -180,64 +272,95 @@ export interface RouteInput {
   archive?: Partial<ArchiveInputs>
 }
 
+/** A route before it is written out: the view's slug, the path segments after it, the query. */
+export interface RouteParts {
+  slug: string
+  segments: string[]
+  query: string
+}
+
 /** Query values keep commas and dashes readable (no %2C). */
 const encode = (v: string) => encodeURIComponent(v).replace(/%2C/gi, ',')
 
-/** The path and query for the current state; only what this view needs. */
-export function buildRoute(s: RouteInput): string {
-  const q: [string, string][] = []
-  const add = (k: string, v: string | number | null | undefined) => {
-    if (v != null && v !== '') q.push([k, String(v)])
-  }
-  // The session also sets History's defaults (its winner, its circuit), so every view keeps it.
-  add('s', s.sessionId)
+type Value = string | number | null | undefined
+
+/** What each view keeps in its path (see the scheme at the top). */
+function pathSegments(s: RouteInput): Value[] {
+  const a = s.archive ?? {}
   switch (s.view) {
     case 'lap-duel':
-      if (s.duel) {
-        add('a', `${s.duel.a}-${s.duel.lapA}`)
-        add('b', `${s.duel.b}-${s.duel.lapB}`)
-      }
-      add('corner', s.corner)
-      if (s.traces.join() !== s.defaultTraces.join()) {
-        add('traces', s.traces.map((t) => TRACE_SLUG[t] ?? t).join(','))
-      }
-      break
+      return [s.sessionId, s.duel && `${s.duel.a}-${s.duel.lapA}-vs-${s.duel.b}-${s.duel.lapB}`]
     case 'replay':
-      if (s.replayTime >= 1) add('at', Math.round(s.replayTime))
-      add('follow', s.follow)
-      break
+    case 'strategy':
+      return [s.sessionId]
     case 'history': {
       const h = s.history ?? {}
-      if (h.tab && h.tab !== 'head-to-head') add('section', h.tab)
-      if (h.tab === 'drivers') add('driver', h.driver)
-      if (h.tab === 'teams') add('team', h.team)
-      if ((!h.tab || h.tab === 'head-to-head') && h.a && h.b) add('pair', `${h.a},${h.b}`)
-      break
+      if (h.tab === 'drivers') return ['drivers', h.driver]
+      if (h.tab === 'teams') return ['teams', h.team]
+      return h.a && h.b ? ['head-to-head', `${h.a}-vs-${h.b}`] : []
     }
     case 'circuits':
-      add('circuit', s.circuit)
-      break
+      return [s.circuit]
     case 'races':
-      add('season', s.archive?.season)
-      add('round', s.archive?.round)
-      if (!s.archive?.round && s.archive?.section && s.archive.section !== 'championship') {
-        add('section', s.archive.section)
-      }
-      if (s.archive?.round && s.archive.session !== 'race') add('session', s.archive?.session)
-      break
-    case 'records':
-      add('scope', s.archive?.scope === 'drivers' ? undefined : s.archive?.scope)
-      add('board', s.archive?.board)
-      add('era', s.archive?.era === 'all' ? undefined : s.archive?.era)
-      break
+      if (a.round) return [a.season, a.round, a.session === 'race' ? undefined : a.session]
+      return [a.season, a.section === 'championship' ? undefined : a.section]
+    case 'records': {
+      const scope = a.scope === 'drivers' && !a.board ? undefined : a.scope
+      return [a.board ? (scope ?? 'drivers') : scope, a.board]
+    }
     case 'engines':
-      add('kind', s.archive?.kind === 'tyre' ? 'tyre' : undefined)
-      add('maker', s.archive?.maker)
-      break
+      return a.kind === 'tyre' ? ['tyres', a.maker] : [a.maker]
     case 'nations':
-      add('nation', s.archive?.nation?.toLowerCase())
-      break
+      return [a.nation?.toLowerCase()]
+    default:
+      return []
   }
-  const query = q.map(([k, v]) => `${k}=${encode(v)}`).join('&')
-  return `/${VIEW_SLUG[s.view]}/${query ? `?${query}` : ''}`
+}
+
+/** Settings that stay in the query. */
+function queryPairs(s: RouteInput): [string, Value][] {
+  switch (s.view) {
+    case 'lap-duel':
+      return [
+        ['corner', s.corner],
+        [
+          'traces',
+          s.traces.join() === s.defaultTraces.join()
+            ? undefined
+            : s.traces.map((t) => TRACE_SLUG[t] ?? t).join(','),
+        ],
+      ]
+    case 'replay':
+      return [
+        ['at', s.replayTime >= 1 ? Math.round(s.replayTime) : undefined],
+        ['follow', s.follow],
+      ]
+    case 'records':
+      return [['era', s.archive?.era === 'all' ? undefined : s.archive?.era]]
+    default:
+      return []
+  }
+}
+
+const present = (v: Value): v is string | number => v != null && v !== ''
+
+export function routeParts(s: RouteInput): RouteParts {
+  const segments: string[] = []
+  // A missing segment ends the path: later parts only make sense after earlier ones.
+  for (const v of pathSegments(s)) {
+    if (!present(v)) break
+    segments.push(String(v))
+  }
+  const query = queryPairs(s)
+    .filter((kv): kv is [string, string | number] => present(kv[1]))
+    .map(([k, v]) => `${k}=${encode(String(v))}`)
+    .join('&')
+  return { slug: VIEW_SLUG[s.view], segments, query }
+}
+
+/** The path and query for the current state; only what this view needs. */
+export function buildRoute(s: RouteInput): string {
+  const { slug, segments, query } = routeParts(s)
+  const path = [slug, ...segments.map(encodeURIComponent)].join('/')
+  return `/${path}/${query ? `?${query}` : ''}`
 }

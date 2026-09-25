@@ -11,7 +11,7 @@ content loaded from somewhere we didn't intend.
 
 ## Decision
 
-- One policy, written by `apps/web/scripts/headers.mjs` before every build into
+- One policy, written by `apps/web/scripts/host-config.mjs` before every build into
   `vercel.json` (Vercel), `public/_headers` (Netlify, Cloudflare Pages) and
   `public/serve.json` (local preview and Playwright), so tests run under the real policy.
 - CSP: `default-src 'self'`; `connect-src` limited to the site, Hugging Face (the data host
@@ -28,7 +28,7 @@ content loaded from somewhere we didn't intend.
 
 ## Consequences
 
-- A new external host (a data mirror, an analytics tool) needs adding to `headers.mjs`,
+- A new external host (a data mirror, an analytics tool) needs adding to `security-policy.mjs`,
   deliberately.
 - Moving to a host that can't set headers would lose the policy; a `<meta>` CSP could cover
   most of it but not `frame-ancestors`.

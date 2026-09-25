@@ -1,4 +1,4 @@
-import { buildRoute, parseRoute, type RouteState } from './routes'
+import { buildRoute, parseRoute, routeParts, type RouteInput, type RouteState } from './routes'
 import { DEFAULT_TRACES, useApp, usePlayback } from './store'
 
 /** Keeps the address bar in step with the app (see routes.ts for the URL scheme). Switching
@@ -19,7 +19,7 @@ function currentRoute(): string | null {
   const { sessionId, duel, corner, traces, view, history, circuit, archive } = useApp.getState()
   const playback = usePlayback.getState()
   if (!sessionId) return null
-  const route = buildRoute({
+  const input: RouteInput = {
     view,
     sessionId,
     duel,
@@ -31,13 +31,14 @@ function currentRoute(): string | null {
     history,
     circuit,
     archive,
-  })
+  }
   // Help keeps its #section anchor.
-  if (PATH_ROUTING) return view === 'help' ? `${route}${window.location.hash}` : route
-  // One-page builds: keep the page, carry the view in the query instead.
-  const [path, query = ''] = route.split('?')
-  const slug = path!.replaceAll('/', '')
-  return `${window.location.pathname}?view=${slug}${query ? `&${query}` : ''}`
+  if (PATH_ROUTING)
+    return view === 'help' ? `${buildRoute(input)}${window.location.hash}` : buildRoute(input)
+  // One-page builds: keep the page, carry the view and its path in the query instead.
+  const { slug, segments, query } = routeParts(input)
+  const path = segments.length ? `&path=${segments.map(encodeURIComponent).join('/')}` : ''
+  return `${window.location.pathname}?view=${slug}${path}${query ? `&${query}` : ''}`
 }
 
 let lastPlace: string | null = null

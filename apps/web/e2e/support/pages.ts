@@ -10,12 +10,12 @@ export const PAGES: readonly {
   text?: boolean
   standalone?: boolean
 }[] = [
-  { name: 'Lap Duel', path: '/duel/?s=2025-italian-grand-prix-q', ready: '1:18.792', text: true },
-  { name: 'History', path: '/history/?s=2025-italian-grand-prix-q', ready: 'Head to head' },
-  { name: 'Race Archive', path: '/races/?season=1988', ready: '1988 season' },
-  { name: 'Race weekend', path: '/races/?season=1988&round=3', ready: 'Monaco Grand Prix' },
+  { name: 'Lap Duel', path: '/duel/2025-italian-grand-prix-q/', ready: '1:18.792', text: true },
+  { name: 'History', path: '/history/', ready: 'Head to head' },
+  { name: 'Race Archive', path: '/races/1988/', ready: '1988 season' },
+  { name: 'Race weekend', path: '/races/1988/3/', ready: 'Monaco Grand Prix' },
   { name: 'Circuits', path: '/circuits/', ready: 'Circuits' },
-  { name: 'Circuit page', path: '/circuits/?circuit=monza', ready: 'Monza' },
+  { name: 'Circuit page', path: '/circuits/monza/', ready: 'Monza' },
   { name: 'Record Book', path: '/records/', ready: 'Record Book' },
   { name: 'Engines & Tyres', path: '/engines/', ready: 'Engines & Tyres' },
   { name: 'Nations', path: '/nations/', ready: 'Nations' },
