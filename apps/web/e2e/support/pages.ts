@@ -47,7 +47,10 @@ export async function settled(page: Page) {
     .poll(
       () =>
         page.evaluate(() => {
-          const running = document.getAnimations().some((a) => a.playState === 'running')
+          // Endless animations (loading shimmers) never settle; entrances are finite.
+          const running = document
+            .getAnimations()
+            .some((a) => a.playState === 'running' && a.effect?.getTiming().iterations !== Infinity)
           // Motion writes opacity inline while it animates; anything between 0 and 1 is mid-fade.
           const fading = [...document.querySelectorAll<HTMLElement>('[style*="opacity"]')].some(
             (el) => {
