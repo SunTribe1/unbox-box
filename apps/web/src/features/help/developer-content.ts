@@ -210,9 +210,20 @@ export const COMMANDS: [command: string, what: string][] = [
   ['npm run data:sync', 'Build new sessions and history (needs uv)'],
 ]
 
-export const WEBMCP_STEPS: string[] = [
+/** What a visitor does to let their browser agent use Unbox Box (shown on the landing page). */
+export const WEBMCP_VISITOR_STEPS: string[] = [
   'Use Chrome 146 or newer. For local testing, turn on chrome://flags/#enable-webmcp-testing and relaunch.',
-  'Deployed sites can switch it on for every Chrome visitor with a WebMCP origin-trial token: set NEXT_PUBLIC_WEBMCP_ORIGIN_TRIAL and Unbox Box adds the meta tag.',
   'Open Unbox Box. When the API is present, the Race Engineer header shows WebMCP as connected and all tools are registered with document.modelContext.',
   'Ask your browser agent something like "compare Norris and Piastri’s qualifying laps". Each call it makes appears in the Race Engineer panel, and the page changes as if you had clicked.',
+]
+
+/** What a site owner does so every Chrome visitor gets WebMCP without a flag. */
+const WEBMCP_OWNER_STEP =
+  'Deployed sites can switch it on for every Chrome visitor with a WebMCP origin-trial token: set NEXT_PUBLIC_WEBMCP_ORIGIN_TRIAL and Unbox Box adds the meta tag.'
+
+/** The full set-up, for the developer guide. */
+export const WEBMCP_STEPS: string[] = [
+  WEBMCP_VISITOR_STEPS[0]!,
+  WEBMCP_OWNER_STEP,
+  ...WEBMCP_VISITOR_STEPS.slice(1),
 ]

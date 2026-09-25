@@ -1,5 +1,5 @@
-import '@fontsource-variable/inter'
-import '@fontsource-variable/jetbrains-mono'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
 import { OG_IMAGE, SITE_URL } from '@/lib/site'

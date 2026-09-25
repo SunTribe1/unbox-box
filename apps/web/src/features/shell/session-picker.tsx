@@ -183,6 +183,7 @@ export function SessionPicker() {
   const index = useQuery(indexQuery())
   const sessionId = useApp((s) => s.sessionId)
   const setSession = useApp((s) => s.setSession)
+  const setView = useApp((s) => s.setView)
   const current = useCurrentSummary()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -284,9 +285,20 @@ export function SessionPicker() {
             ))}
           </CommandList>
           <div className="flex items-center justify-between border-t px-3 py-2 text-[11px] text-faint-foreground">
+            {/* Telemetry only: point to the full history for older races. */}
             <span>
-              {index.data.sessions.length} sessions · {groups.length}{' '}
-              {groups.length === 1 ? 'season' : 'seasons'}
+              {index.data.sessions.length} sessions with telemetry, {groups.at(-1)?.season}–
+              {groups[0]?.season} ·{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setView('races')
+                  setOpen(false)
+                }}
+                className="rounded-sm font-medium text-signal-ink underline-offset-4 hover:underline"
+              >
+                every Grand Prix since 1950
+              </button>
             </span>
             <span className="font-mono">SQ · S · Q · R</span>
           </div>

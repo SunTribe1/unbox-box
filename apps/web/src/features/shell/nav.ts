@@ -126,3 +126,15 @@ export function goTo(view: View): void {
   }
   useApp.getState().setView(view)
 }
+
+/** The logo's click inside the app: switch to Lap Duel in place, like the rail does. A real
+ *  href stays on the link, so opening it in a new tab still works. */
+export function openLapDuel(event: {
+  preventDefault: () => void
+  metaKey?: boolean
+  ctrlKey?: boolean
+}): void {
+  if (event.metaKey || event.ctrlKey) return
+  event.preventDefault()
+  goTo('lap-duel')
+}

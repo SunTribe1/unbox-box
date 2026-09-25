@@ -22,6 +22,7 @@ export const PAGES: readonly {
   { name: 'Help', path: '/help/', ready: 'Help & feedback' },
   { name: 'Help for developers', path: '/help/#dev-architecture', ready: 'Tool reference' },
   { name: 'Credits', path: '/credits/', ready: 'Credits and licences', standalone: true },
+  { name: 'Landing', path: '/', ready: 'Every lap, unboxed.', standalone: true },
 ]
 
 /** Waits for the page's proof of life: a heading, or (for Lap Duel) the pole time. */

@@ -377,7 +377,7 @@ export function AgentPanel({
             <InputGroupButton
               type="submit"
               size="icon-sm"
-              className="rounded-lg bg-signal text-signal-foreground hover:bg-signal/90 disabled:opacity-40"
+              className="glow-hover rounded-lg bg-signal text-signal-foreground hover:bg-signal/90 disabled:opacity-40"
               disabled={!draft.trim() || busy || !ready}
               aria-label="Send"
             >

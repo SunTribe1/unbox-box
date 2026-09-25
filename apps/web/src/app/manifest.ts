@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Unbox Box',
     short_name: 'Unbox Box',
     description:
-      'F1 analysis you can drive: lap duels, race replays, strategy what-ifs and 75 years of history. Unofficial fan project.',
+      'F1 analysis you can drive: lap duels, race replays, strategy what-ifs and every Grand Prix since 1950. Unofficial fan project.',
     start_url: '/',
     scope: '/',
     display: 'standalone',

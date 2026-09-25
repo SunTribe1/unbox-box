@@ -43,6 +43,7 @@ hasn
 Hasselt
 headshots
 hemv
+Higgsfield
 huggingface
 Hülkenberg
 hungaroring
@@ -75,6 +76,7 @@ motorsport
 naiagent
 nanmax
 Nazionale
+networkidle
 nosniff
 npirelli
 Overcut

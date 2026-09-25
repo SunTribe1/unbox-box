@@ -5,6 +5,7 @@ import type { DuelSelection, SessionMeta } from '@unbox-box/tools'
 import { useEffect } from 'react'
 import { indexQuery, metaQuery, queryClient } from './data'
 import { useApp, usePlayback } from './store'
+import { pickSession } from './pick-session'
 import { readUrl, startUrlSync, type UrlState } from './url-sync'
 
 function defaultDuel(meta: SessionMeta): DuelSelection {
@@ -38,8 +39,7 @@ export function useBootstrap() {
 
     async function init() {
       const index = await queryClient.fetchQuery(indexQuery())
-      const sessionId =
-        index.sessions.find((s) => s.id === url.sessionId)?.id ?? index.sessions[0]?.id
+      const sessionId = pickSession(index.sessions, url)
       if (!sessionId || cancelled) return
       const meta = await queryClient.fetchQuery(metaQuery(sessionId))
       if (cancelled) return

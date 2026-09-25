@@ -4,6 +4,7 @@ import Link from 'next/link'
 import type * as React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { Disclaimer } from '@/components/disclaimer'
 import { Wordmark } from '@/features/shell/logo'
 import {
   ASSETS,
@@ -246,7 +247,7 @@ export default function CreditsPage() {
           </dl>
         </Tile>
 
-        <Tile title="Our own work" span="md:col-span-3 xl:col-span-3">
+        <Tile title="Our own work" span="md:col-span-6 xl:col-span-6">
           <Prose>
             <p>
               Unbox Box&apos;s code, logo and motorsport icons are original work, released under the{' '}
@@ -265,31 +266,8 @@ export default function CreditsPage() {
           </Prose>
         </Tile>
 
-        <Tile title="Names, colours and images" span="md:col-span-3 xl:col-span-3">
-          <Prose>
-            <p>
-              Driver, team, circuit and event names are used only to identify them, as facts. Team
-              colours are our own approximations for telling cars apart on charts.
-            </p>
-            <p>
-              Unbox Box uses no official photographs, logos, liveries, broadcast footage or audio,
-              and no affiliate or sponsored links.
-            </p>
-          </Prose>
-        </Tile>
-
         <Tile title="Disclaimer" span="md:col-span-6 xl:col-span-12">
-          <Prose>
-            <p>
-              Unbox Box is unofficial and is not associated in any way with the Formula 1 companies.
-              It is not endorsed or sponsored by Formula One World Championship Limited, Formula One
-              Management, Formula One Licensing B.V., the FIA or any team.
-            </p>
-            <p>
-              F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related
-              marks are trademarks of Formula One Licensing B.V.
-            </p>
-          </Prose>
+          <Disclaimer />
         </Tile>
 
         <Card className="md:col-span-6 xl:col-span-12">

@@ -14,53 +14,71 @@
  * colors for compounds. The shadcn contract (primary, card, popover, accent…) is mapped onto
  * these at the bottom of each theme so registry components match the app.
  */
+
 /* ─── 2. Design tokens: light theme (the source of every colour) ────────────────────────────── */
 :root {
   /* Brand: the logo's red and its black tile. The same in both themes. */
   --brand-red: #e62424;
   --brand-ink: #0a0a0b;
   --radius: 0.75rem;
-  --background: oklch(0.985 0.002 250);
-  --surface-1: oklch(1 0 0);
-  --surface-2: oklch(0.968 0.003 250);
-  --surface-3: oklch(0.94 0.004 250);
-  --foreground: oklch(0.19 0.012 255);
-  --muted-foreground: oklch(0.48 0.012 255);
-  --faint-foreground: oklch(0.52 0.01 255); /* ≥4.5:1 on surface-1/2 for small text */
-  --border: oklch(0.905 0.005 255);
-  --border-strong: oklch(0.84 0.006 255);
-  --ring: oklch(0.72 0.16 70);
-  --grid: oklch(0.92 0.004 255);
+  --background: oklch(98.5% 0.002 250deg);
+  --surface-1: oklch(100% 0 0deg);
+  --surface-2: oklch(96.8% 0.003 250deg);
+  --surface-3: oklch(94% 0.004 250deg);
+  --foreground: oklch(19% 0.012 255deg);
+  --muted-foreground: oklch(48% 0.012 255deg);
+  --faint-foreground: oklch(52% 0.01 255deg); /* ≥4.5:1 on surface-1/2 for small text */
+  --border: oklch(90.5% 0.005 255deg);
+  --border-strong: oklch(84% 0.006 255deg);
+
+  /* Card and overlay edges: the hairline with a touch of the red accent. */
+  --border-accent: color-mix(in oklch, var(--border), var(--signal) 16%);
+
+  /* Loading placeholders, faintly red. */
+  --skeleton: color-mix(in oklch, var(--surface-2), var(--signal) 7%);
+  --ring: oklch(55% 0.2 27deg);
+  --grid: oklch(92% 0.004 255deg);
   --shadow-color: 220 30% 10%;
 
-  --signal: oklch(0.72 0.16 70);
-  --signal-foreground: oklch(0.2 0.02 70);
-  --signal-soft: oklch(0.72 0.16 70 / 0.14);
-  /* Amber as text: the fill color is too light on white (2.6:1), so text uses a deeper ink. */
-  --signal-ink: oklch(0.49 0.13 60);
+  /* The accent is the logo's red. As a fill it is a shade deeper than the logo so white text
+   * on it passes AA (5.9:1); as text it is deeper again on light surfaces (6.6:1 on white). */
+  --signal: oklch(53% 0.2 27deg);
+  --signal-foreground: oklch(100% 0 0deg);
+  --signal-soft: oklch(53% 0.2 27deg / 10%);
+  --signal-ink: oklch(50% 0.19 27deg);
+
+  /* Decorative red light: glows, sweeps, the loading bar. Never carries meaning on its own. */
+  --glow: oklch(60% 0.22 27deg);
+  --glow-shadow:
+    0 0 0 1px oklch(60% 0.22 27deg / 28%), 0 4px 18px -4px oklch(60% 0.22 27deg / 45%),
+    0 10px 40px -12px oklch(60% 0.22 27deg / 35%);
 
   /* Set at runtime from the current duel's team colors (use-team-colors.ts). */
   --driver-a: #2553b8;
-  --driver-b: #d9650b;
+  --driver-b: #c51e21;
   --driver-a-soft: color-mix(in oklch, var(--driver-a) 12%, transparent);
   --driver-b-soft: color-mix(in oklch, var(--driver-b) 12%, transparent);
+
   /* Team colours as text: pulled toward the text colour so small labels pass WCAG AA in both
      themes (team colours themselves can be light yellows or pale blues). */
   --driver-a-ink: color-mix(in oklab, var(--driver-a) 62%, var(--foreground));
   --driver-b-ink: color-mix(in oklab, var(--driver-b) 62%, var(--foreground));
-  --even: oklch(0.8 0.005 255);
-
+  --even: oklch(80% 0.005 255deg);
   --tyre-soft: #e8002d;
   --tyre-medium: #e0b400;
+
+  /* Safety car and VSC periods: amber, apart from the red accent and the medium tyre. */
+  --status-sc: oklch(72% 0.16 70deg);
   --tyre-hard: #8a9097;
   --tyre-inter: #2fa84a;
   --tyre-wet: #0a64e8;
 
   /* Light-theme status colours are dark enough to pass WCAG AA as small text on white. */
-  --success: oklch(0.52 0.13 150);
+  --success: oklch(52% 0.13 150deg);
+
   /* Timing-screen convention: session-best sector. */
-  --sector-best: oklch(0.49 0.2 305);
-  --danger: oklch(0.53 0.2 25);
+  --sector-best: oklch(49% 0.2 305deg);
+  --danger: oklch(53% 0.2 25deg);
 
   /* shadcn contract */
   --card: var(--surface-1);
@@ -79,17 +97,18 @@
   --chart-1: var(--driver-a);
   --chart-2: var(--driver-b);
   --chart-3: var(--signal);
-  --chart-4: oklch(0.6 0.12 200);
-  --chart-5: oklch(0.6 0.1 300);
+  --chart-4: oklch(60% 0.12 200deg);
+  --chart-5: oklch(60% 0.1 300deg);
+
   /* Categorical series (tyre makers...): eight hues at mid lightness, readable in both themes. */
-  --series-1: oklch(0.62 0.15 250);
+  --series-1: oklch(62% 0.15 250deg);
   --series-2: var(--signal);
-  --series-3: oklch(0.62 0.13 160);
-  --series-4: oklch(0.6 0.18 25);
-  --series-5: oklch(0.62 0.12 300);
-  --series-6: oklch(0.72 0.1 200);
-  --series-7: oklch(0.66 0.02 255);
-  --series-8: oklch(0.66 0.14 340);
+  --series-3: oklch(62% 0.13 160deg);
+  --series-4: oklch(75% 0.15 75deg); /* amber: the accent (series-2) took red */
+  --series-5: oklch(62% 0.12 300deg);
+  --series-6: oklch(72% 0.1 200deg);
+  --series-7: oklch(66% 0.02 255deg);
+  --series-8: oklch(66% 0.14 340deg);
   --sidebar: var(--surface-1);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--signal);
@@ -106,42 +125,50 @@
   --surface-1: #101216;
   --surface-2: #161a1f;
   --surface-3: #1e232a;
-  --foreground: oklch(0.96 0.004 250);
-  --muted-foreground: oklch(0.72 0.012 255);
-  --faint-foreground: oklch(0.62 0.012 255); /* ≥4.5:1 on surface-1/2 for small text */
-  --border: oklch(1 0 0 / 0.075);
-  --border-strong: oklch(1 0 0 / 0.13);
-  --grid: oklch(1 0 0 / 0.055);
-  --ring: oklch(0.8 0.15 75);
+  --foreground: oklch(96% 0.004 250deg);
+  --muted-foreground: oklch(72% 0.012 255deg);
+  --faint-foreground: oklch(62% 0.012 255deg); /* ≥4.5:1 on surface-1/2 for small text */
+  --border: oklch(100% 0 0deg / 7.5%);
+  --border-strong: oklch(100% 0 0deg / 13%);
+
+  /* Card and overlay edges: the hairline with a touch of the red accent. */
+  --border-accent: color-mix(in oklch, var(--border), var(--signal) 12%);
+
+  /* Loading placeholders, faintly red. */
+  --skeleton: color-mix(in oklch, var(--surface-2), var(--signal) 10%);
+  --grid: oklch(100% 0 0deg / 5.5%);
+  --ring: oklch(68% 0.2 25deg);
   --shadow-color: 220 40% 2%;
 
-  --signal: oklch(0.8 0.15 75);
-  --signal-foreground: oklch(0.2 0.03 70);
-  --signal-soft: oklch(0.8 0.15 75 / 0.14);
-  --signal-ink: var(--signal);
-
+  /* Same fill as light (white text 5.9:1); text is a lighter red for dark surfaces (6.7:1). */
+  --signal: oklch(53% 0.2 27deg);
+  --signal-foreground: oklch(100% 0 0deg);
+  --signal-soft: oklch(62% 0.21 25deg / 16%);
+  --signal-ink: oklch(70% 0.18 24deg);
+  --glow: oklch(64% 0.23 25deg);
+  --glow-shadow:
+    0 0 0 1px oklch(64% 0.23 25deg / 35%), 0 4px 22px -4px oklch(64% 0.23 25deg / 55%),
+    0 12px 48px -12px oklch(64% 0.23 25deg / 45%);
   --driver-a: #4a7ff0;
-  --driver-b: #ff9a3c;
-  --even: oklch(0.42 0.01 255);
-
+  --driver-b: #fa6865;
+  --even: oklch(42% 0.01 255deg);
   --tyre-soft: #ff3b4f;
   --tyre-medium: #ffd23f;
+  --status-sc: oklch(80% 0.15 75deg);
   --tyre-hard: #e4e7ea;
   --tyre-inter: #45d06a;
   --tyre-wet: #3d8bff;
-
-  --success: oklch(0.72 0.15 150);
-  --sector-best: oklch(0.72 0.17 305);
-  --danger: oklch(0.66 0.2 25);
+  --success: oklch(72% 0.15 150deg);
+  --sector-best: oklch(72% 0.17 305deg);
+  --danger: oklch(66% 0.2 25deg);
 }
 
 /* ─── 4. Tailwind theme: tokens exposed as utilities (bg-signal, text-driver-a…) ────────────── */
 @theme inline {
   --color-brand-red: var(--brand-red);
   --color-brand-ink: var(--brand-ink);
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
-
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface-1: var(--surface-1);
@@ -165,13 +192,15 @@
   --color-even: var(--even);
   --color-tyre-soft: var(--tyre-soft);
   --color-tyre-medium: var(--tyre-medium);
+  --color-border-accent: var(--border-accent);
+  --color-skeleton: var(--skeleton);
+  --color-status-sc: var(--status-sc);
   --color-tyre-hard: var(--tyre-hard);
   --color-tyre-inter: var(--tyre-inter);
   --color-tyre-wet: var(--tyre-wet);
   --color-success: var(--success);
   --color-sector-best: var(--sector-best);
   --color-danger: var(--danger);
-
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -190,41 +219,44 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
   --radius-sm: calc(var(--radius) - 6px);
   --radius-md: calc(var(--radius) - 4px);
   --radius-lg: calc(var(--radius) - 2px);
   --radius-xl: var(--radius);
   --radius-2xl: calc(var(--radius) + 4px);
-
   --shadow-card:
-    0 1px 0 0 oklch(1 0 0 / 0.03) inset, 0 1px 2px hsl(var(--shadow-color) / 0.06),
-    0 8px 24px -12px hsl(var(--shadow-color) / 0.18);
+    0 1px 0 0 oklch(100% 0 0deg / 3%) inset, 0 1px 2px hsl(var(--shadow-color) / 6%),
+    0 8px 24px -12px hsl(var(--shadow-color) / 18%);
   --shadow-pop:
-    0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 16px 48px -12px hsl(var(--shadow-color) / 0.45);
-
+    0 1px 0 0 oklch(100% 0 0deg / 4%) inset, 0 16px 48px -12px hsl(var(--shadow-color) / 45%);
   --animate-shimmer: shimmer 2.4s linear infinite;
   --animate-view-in: view-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+
   @keyframes view-in {
     from {
       opacity: 0;
       transform: translateY(8px);
     }
   }
+
   /* Three blinks, then solid: WCAG 2.2.2 allows blinking for at most five seconds. */
   --animate-blink: blink 1.4s ease-in-out 3;
+
   @keyframes blink {
     50% {
       opacity: 0.15;
     }
   }
+
   --animate-dock-in: dock-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+
   @keyframes dock-in {
     from {
       opacity: 0;
       transform: translateX(16px);
     }
   }
+
   --animate-chart-reveal: chart-reveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -234,20 +266,24 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+
   @keyframes chart-reveal {
     from {
       clip-path: inset(0 100% 0 0);
       opacity: 0.4;
     }
+
     to {
       clip-path: inset(0 0 0 0);
       opacity: 1;
     }
   }
+
   @keyframes shimmer {
     from {
       background-position: 200% 0;
     }
+
     to {
       background-position: -200% 0;
     }
@@ -260,6 +296,7 @@
  * caps above data, caption for helper text, and numeric (mono + tabular) for any figure
  * that updates, so digits never jitter.
  */
+
 /* ─── 5. Type scale ─────────────────────────────────────────────────────────────────────────── */
 @utility text-display {
   font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
@@ -267,12 +304,14 @@
   font-weight: 600;
   letter-spacing: -0.025em;
 }
+
 @utility text-title {
   font-size: 0.9375rem;
   line-height: 1.35;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
+
 @utility text-label {
   font-size: 0.6875rem;
   line-height: 1.2;
@@ -280,10 +319,54 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
 @utility text-caption {
   font-size: 0.75rem;
   line-height: 1.45;
 }
+
+/* Marketing scale (landing page only). Light weight, tight tracking: the headline carries the
+ * page, so it is large and quiet rather than heavy. */
+@utility text-hero {
+  font-size: clamp(3rem, 1.6rem + 6.4vw, 7rem);
+  line-height: 0.92;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+@utility text-headline {
+  font-size: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  line-height: 1.05;
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+@utility text-subhead {
+  font-size: clamp(1.5rem, 1.25rem + 1vw, 2.125rem);
+  line-height: 1.12;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+@utility text-lead {
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  letter-spacing: -0.011em;
+  text-wrap: pretty;
+  max-width: 62ch;
+}
+
+/* Small sentence-case label: section markers, HUD labels, window titles. */
+@utility text-eyebrow {
+  font-size: 0.8125rem;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
 @utility numeric {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
@@ -295,39 +378,192 @@
   * {
     @apply border-border;
   }
+
   html {
     color-scheme: light;
   }
+
   html.dark {
     color-scheme: dark;
   }
+
   body {
     @apply bg-background text-[0.875rem] leading-normal text-foreground antialiased;
-    /* Inter: single-storey a, open digits, disambiguated l/I; optical sizes on. */
-    font-feature-settings: 'cv11', 'ss01', 'ss03', 'cv05';
-    font-optical-sizing: auto;
-    text-rendering: optimizeLegibility;
+
+    /* Geist: slightly tighter tracking reads crisper at interface sizes. */
+    letter-spacing: -0.006em;
+    text-rendering: optimizelegibility;
   }
+
   h1,
   h2,
   h3 {
     text-wrap: balance;
   }
+
   p {
     text-wrap: pretty;
   }
+
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
   }
+
   ::selection {
     background: var(--signal-soft);
   }
 }
 
 /* ─── 7. Utilities ──────────────────────────────────────────────────────────────────────────── */
+
+/* Red light (brand accent). Glows sit on pseudo-elements so only their opacity animates;
+ * reduced motion removes the fade (section 9) and the glow simply appears. */
+
+/* A red glow and a soft top highlight that fade in on hover and keyboard focus. Works on the
+ * element itself or on a card inside a `group` (TileButton). */
+@utility glow-hover {
+  position: relative;
+  isolation: isolate;
+
+  &::after,
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Outer glow, behind the element's content. */
+  &::after {
+    z-index: -1;
+    box-shadow: var(--glow-shadow);
+  }
+
+  /* Inner light from the top edge. */
+  &::before {
+    z-index: 1;
+    background: radial-gradient(120% 90% at 50% 0%, oklch(100% 0 0deg / 16%), transparent 60%);
+  }
+
+  /* A card inside a group (TileButton) lights with its parent; listed first so the more
+   * specific hover and focus selectors below come later. */
+  :where(.group:hover, .group:focus-visible) > &::after,
+  :where(.group:hover, .group:focus-visible) > &::before {
+    opacity: 1;
+  }
+
+  &:hover::after,
+  &:hover::before,
+  &:focus-visible::after,
+  &:focus-visible::before {
+    opacity: 1;
+  }
+}
+
+/* Film grain: a static SVG noise tile (landing page hero). */
+@utility bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Ambient red light on the landing page: the same --glow as the closing CTA's floor glow. */
+
+/* Under a bar: a red hairline and soft light spilling downward. */
+@utility glow-rim {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    pointer-events: none;
+  }
+
+  &::after {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(from var(--glow) l c h / 70%),
+      transparent
+    );
+  }
+
+  &::before {
+    height: 5rem;
+    background: radial-gradient(
+      45% 100% at 50% 0%,
+      oklch(from var(--glow) l c h / 18%),
+      transparent
+    );
+  }
+}
+
+/* Along a page edge (fixed, so it stays while scrolling). */
+@utility glow-side-left {
+  background: radial-gradient(100% 55% at 0% 50%, oklch(from var(--glow) l c h / 16%), transparent);
+}
+
+@utility glow-side-right {
+  background: radial-gradient(
+    100% 55% at 100% 50%,
+    oklch(from var(--glow) l c h / 16%),
+    transparent
+  );
+}
+
+/* A floor of light under a closing section. */
+@utility glow-floor {
+  background: radial-gradient(
+    60% 60% at 50% 100%,
+    oklch(from var(--glow) l c h / 35%),
+    transparent 70%
+  );
+}
+
+/* A red glowing underline that fades in on hover and keyboard focus (landing nav). */
+@utility glow-underline {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0.75rem;
+    bottom: 0.3rem;
+    height: 1px;
+    border-radius: 1px;
+    background: var(--glow);
+    box-shadow:
+      0 0 6px 0 var(--glow),
+      0 0 14px 1px oklch(from var(--glow) l c h / 60%);
+    opacity: 0;
+    transition: opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    opacity: 1;
+  }
+}
+
+/* A constant glow for small active markers (the rail marker, live dots). */
+@utility glow-dot {
+  box-shadow:
+    0 0 6px 0 var(--glow),
+    0 0 14px 1px oklch(from var(--glow) l c h / 50%);
+}
+
+/* Red light on active icons. */
+@utility glow-icon {
+  filter: drop-shadow(0 0 6px oklch(from var(--glow) l c h / 70%));
+}
+
 /* Horizontal scrollers (tab strips, chip rows) that hide their scrollbar. */
 @utility no-scrollbar {
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -338,22 +574,27 @@
 }
 
 /* ─── 8. Third-party overrides ──────────────────────────────────────────────────────────────── */
+
 /* uPlot: let tokens drive its chrome. */
 .uplot {
   font-family: var(--font-mono);
 }
+
 .u-legend {
   display: none;
 }
+
 .u-cursor-x,
 .u-cursor-y {
   border-color: var(--faint-foreground) !important;
 }
+
 .u-select {
   background: var(--signal-soft);
 }
 
 /* History spans every era, so its A/B pair is neutral (not team colors), CVD-checked. */
+
 /* Theme switch: the new theme grows as a circle from the toggle (theme-toggle.tsx). */
 ::view-transition-old(root),
 ::view-transition-new(root) {

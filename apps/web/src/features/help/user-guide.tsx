@@ -11,6 +11,7 @@ import { goTo, NAV } from '../shell/nav'
 import { SHORTCUT_GROUPS } from '../shell/shortcuts-dialog'
 import { FeedbackForm } from './feedback-form'
 import { GLOSSARY, GUIDES, RESULT_CODES } from './help-content'
+import { Disclaimer } from '@/components/disclaimer'
 import { LegendRow, Section, Swatch, Terms } from './help-parts'
 
 export const USER_SECTIONS = [
@@ -20,6 +21,7 @@ export const USER_SECTIONS = [
   ['glossary', 'Glossary'],
   ['shortcuts', 'Keyboard shortcuts'],
   ['data', 'About the data'],
+  ['disclaimer', 'Disclaimer'],
   ['feedback', 'Report a bug or idea'],
 ] as const
 
@@ -142,8 +144,8 @@ export function UserGuide() {
                   Slower than their best
                 </LegendRow>
                 <LegendRow mark={<Swatch className="bg-danger" />}>Places lost; red flag</LegendRow>
-                <LegendRow mark={<Swatch className="bg-tyre-medium/40" />}>
-                  Timeline band: safety car or VSC
+                <LegendRow mark={<Swatch className="bg-status-sc/50" />}>
+                  Timeline band (amber): safety car or VSC
                 </LegendRow>
               </ul>
             </CardContent>
@@ -307,6 +309,18 @@ export function UserGuide() {
                 <span className="text-muted-foreground">{body}</span>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      </Section>
+
+      <Section
+        id="disclaimer"
+        title="Disclaimer"
+        description="Unbox Box is an unofficial fan project. The full notice, also on the Credits page."
+      >
+        <Card>
+          <CardContent className="pt-4 sm:pt-5">
+            <Disclaimer />
           </CardContent>
         </Card>
       </Section>
