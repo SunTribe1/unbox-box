@@ -39,3 +39,28 @@ export const VIEWPORTS = [
   { name: 'laptop', width: 1280, height: 800 },
   { name: 'desktop', width: 1920, height: 1080 },
 ] as const
+
+/** Waits until entrance animations have finished, so contrast is measured at full opacity.
+ *  Staggered lists (the circuit index) take longer than any fixed wait on a slow CI machine. */
+export async function settled(page: Page) {
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          // Endless animations (loading shimmers) never settle; entrances are finite.
+          const running = document
+            .getAnimations()
+            .some((a) => a.playState === 'running' && a.effect?.getTiming().iterations !== Infinity)
+          // Motion writes opacity inline while it animates; anything between 0 and 1 is mid-fade.
+          const fading = [...document.querySelectorAll<HTMLElement>('[style*="opacity"]')].some(
+            (el) => {
+              const o = Number(el.style.opacity)
+              return el.style.opacity !== '' && o > 0 && o < 1
+            },
+          )
+          return running || fading
+        }),
+      { timeout: 10_000, intervals: [100, 200, 400] },
+    )
+    .toBe(false)
+}

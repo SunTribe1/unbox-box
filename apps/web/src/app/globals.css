@@ -211,7 +211,8 @@
       transform: translateY(8px);
     }
   }
-  --animate-blink: blink 1.4s ease-in-out infinite;
+  /* Three blinks, then solid: WCAG 2.2.2 allows blinking for at most five seconds. */
+  --animate-blink: blink 1.4s ease-in-out 3;
   @keyframes blink {
     50% {
       opacity: 0.15;
