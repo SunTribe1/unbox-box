@@ -15,7 +15,7 @@ describe('host rewrites', () => {
 
   it('send deep paths to the view page on every host', () => {
     expect(vercelRewrites()).toContainEqual({
-      source: '/duel/:path+',
+      source: '/duel/(.+)',
       destination: '/duel/index.html',
     })
     expect(redirectsFile()).toContain('/races/*  /races/index.html  200\n')
