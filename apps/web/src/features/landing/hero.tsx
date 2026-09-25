@@ -22,7 +22,7 @@ const rise: Variants = {
 export function Hero({ toolCount }: { toolCount: number }) {
   const enter = useEnterApp()
   return (
-    <section className="relative isolate flex min-h-[92svh] items-center overflow-hidden bg-brand-ink text-white">
+    <section className="relative isolate flex min-h-svh items-center overflow-hidden bg-brand-ink text-white">
       <div className="absolute inset-0 -z-10">
         <HeroCanvas />
         {/* Edge shading keeps the headline readable over the halftone track; grain for film. */}

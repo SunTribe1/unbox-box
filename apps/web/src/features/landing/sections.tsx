@@ -1,7 +1,7 @@
 'use client'
 
 import { ArrowRightIcon } from 'lucide-react'
-import { m } from 'motion/react'
+import { m, useReducedMotion } from 'motion/react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Wordmark } from '@/features/shell/logo'
@@ -21,13 +21,21 @@ const reveal = {
 
 export function LandingNav() {
   const enter = useEnterApp()
+  const reduce = useReducedMotion()
+  // Already on "/", so the link alone would not move: scroll back to the hero and drop the #hash.
+  const toTop = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey) return
+    event.preventDefault()
+    history.replaceState(null, '', '/')
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+  }
   return (
     <header className="glow-rim fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#0a0a0b]">
       <nav
         aria-label="Main"
         className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8"
       >
-        <Link href="/" aria-label="Unbox Box home" className="text-white">
+        <Link href="/" onClick={toTop} aria-label="Unbox Box: back to top" className="text-white">
           <Wordmark className="h-6 w-auto" />
         </Link>
         <div className="flex items-center gap-1 sm:gap-2">

@@ -23,6 +23,18 @@ test('the lights name the view they are loading', async ({ page }) => {
   await expect(page.getByRole('slider', { name: 'Race time' })).toBeVisible({ timeout: 12_000 })
 })
 
+test('the landing hero fills the screen and the logo scrolls back to it', async ({ page }) => {
+  await page.goto('/')
+  const hero = await page.locator('section').first().boundingBox()
+  const height = page.viewportSize()?.height ?? 0
+  expect(hero?.height).toBeGreaterThanOrEqual(height)
+  await page.goto('/#about')
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
+  await page.getByRole('link', { name: 'Unbox Box: back to top' }).click()
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+  expect(new URL(page.url()).hash).toBe('')
+})
+
 test('links from before the landing page still open the app', async ({ page }) => {
   await page.goto(QUALI)
   await expect(page.getByText('1:18.792').first()).toBeVisible()
