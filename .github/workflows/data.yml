@@ -13,15 +13,20 @@ on:
         description: Session, e.g. Qualifying
         default: Qualifying
 
+# Builds one session and uploads it as an artifact. main is protected, so data changes land
+# through a pull request like any other change: download the artifact, add it, open a PR.
+
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
       # Inputs reach the shell through env vars, never ${{ }} inside `run`, so a crafted
       # event name can't inject commands.
       - name: Build data
@@ -35,14 +40,8 @@ jobs:
           --season "$SEASON"
           --event "$EVENT"
           --session "$SESSION"
-      - name: Commit data
-        env:
-          SEASON: ${{ inputs.season }}
-          EVENT: ${{ inputs.event }}
-          SESSION: ${{ inputs.session }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/web/public/data
-          git diff --cached --quiet || git commit -m "data: $SEASON $EVENT $SESSION"
-          git push
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: session-data
+          path: apps/web/public/data
+          retention-days: 7
