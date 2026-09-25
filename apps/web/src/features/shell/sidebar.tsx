@@ -11,7 +11,7 @@ import { useApp } from '@/lib/store'
 import { REPO_URL } from '@/lib/site'
 import { cn } from '@/lib/utils'
 import { Logo } from './logo'
-import { goTo, NAV } from './nav'
+import { goTo, NAV, openLapDuel } from './nav'
 
 function RailButton({
   label,
@@ -40,7 +40,7 @@ function RailButton({
           className={cn(
             'relative flex size-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground [&_svg]:relative [&_svg]:size-[18px]',
             !active && 'hover:bg-surface-2',
-            active && 'text-foreground',
+            active && 'text-signal-ink [&_svg]:glow-icon',
             disabled && 'opacity-40 hover:bg-transparent hover:text-muted-foreground',
           )}
         >
@@ -53,7 +53,7 @@ function RailButton({
               />
               <m.span
                 layoutId="rail-marker"
-                className="absolute top-2 -left-3 h-6 w-1 rounded-r bg-signal"
+                className="absolute top-2 -left-3 h-6 w-1 rounded-r bg-signal glow-dot"
                 transition={spring.snappy}
               />
             </>
@@ -76,7 +76,7 @@ export function Sidebar() {
       aria-label="Main"
       className="no-scrollbar hidden w-16 shrink-0 flex-col items-center gap-1 overflow-y-auto border-r bg-surface-1 py-3 md:flex"
     >
-      <Link href="/" aria-label="Unbox Box home" className="mb-3">
+      <Link href="/duel/" onClick={openLapDuel} aria-label="Unbox Box: Lap Duel" className="mb-3">
         <Logo className="size-10" />
       </Link>
       {NAV.filter((n) => n.group !== 'meta').map(({ view: v, label, icon: Icon, group }, i) => (

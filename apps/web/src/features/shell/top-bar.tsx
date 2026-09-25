@@ -18,11 +18,12 @@ import { useMediaQuery } from '@/lib/use-media-query'
 import { cn } from '@/lib/utils'
 import { useSessionMeta } from '../lap-duel/use-duel'
 import { FetchProgress } from './fetch-progress'
-import Link from 'next/link'
 import { Logo, Wordmark } from './logo'
 import { SessionPicker } from './session-picker'
 import { ShareMenu } from './share-menu'
 import { ThemeToggle } from './theme-toggle'
+import Link from 'next/link'
+import { openLapDuel } from './nav'
 
 /** One session fact in the top bar: a muted 14px icon, then the value. */
 function MetaItem({
@@ -72,7 +73,7 @@ function EngineerToggle() {
         {live && (
           <span
             aria-hidden
-            className="absolute -top-0.5 -right-0.5 size-2 animate-blink rounded-full bg-foreground ring-2 ring-surface-1"
+            className="absolute -top-0.5 -right-0.5 size-2 animate-blink rounded-full bg-signal ring-2 glow-dot ring-surface-1"
           />
         )}
       </span>
@@ -90,9 +91,11 @@ export function TopBar() {
     <header className="@container/topbar relative flex h-14 shrink-0 items-center gap-3 border-b bg-surface-1 px-4">
       <Logo className="size-8 md:hidden" />
       {/* The full name on every page; the rail beside it carries the square mark. */}
+      {/* Inside the app, the logo goes to Lap Duel (the landing page is for visitors). */}
       <Link
-        href="/"
-        aria-label="Unbox Box home"
+        href="/duel/"
+        onClick={openLapDuel}
+        aria-label="Unbox Box: Lap Duel"
         className="hidden shrink-0 items-center gap-3 rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none md:flex"
       >
         <Wordmark className="w-[92px] text-foreground" label="" />
