@@ -3,43 +3,43 @@
   "rewrites": [
     {
       "source": "/duel/:path+",
-      "destination": "/duel/"
+      "destination": "/duel"
     },
     {
       "source": "/replay/:path+",
-      "destination": "/replay/"
+      "destination": "/replay"
     },
     {
       "source": "/strategy/:path+",
-      "destination": "/strategy/"
+      "destination": "/strategy"
     },
     {
       "source": "/history/:path+",
-      "destination": "/history/"
+      "destination": "/history"
     },
     {
       "source": "/circuits/:path+",
-      "destination": "/circuits/"
+      "destination": "/circuits"
     },
     {
       "source": "/races/:path+",
-      "destination": "/races/"
+      "destination": "/races"
     },
     {
       "source": "/records/:path+",
-      "destination": "/records/"
+      "destination": "/records"
     },
     {
       "source": "/engines/:path+",
-      "destination": "/engines/"
+      "destination": "/engines"
     },
     {
       "source": "/nations/:path+",
-      "destination": "/nations/"
+      "destination": "/nations"
     },
     {
       "source": "/help/:path+",
-      "destination": "/help/"
+      "destination": "/help"
     }
   ],
   "headers": [
