@@ -25,14 +25,19 @@
     "knip": "knip --no-progress",
     "test:coverage": "npm run test:coverage --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w @unbox-box/web",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run spell && npm run knip && npm test"
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run spell && npm run knip && npm test",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@cspell/dict-en-gb": "^5.0.34",
     "@eslint/js": "^9.39.1",
     "cspell": "^10.3.4",
     "eslint": "^9.39.5",
+    "husky": "^9.1.7",
     "knip": "^6.38.0",
+    "lint-staged": "^17.5.1",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "~5.9.3",
@@ -40,5 +45,19 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs,json,md,css,yml,yaml}": [
+      "prettier --write",
+      "cspell --no-progress --no-must-find-files"
+    ],
+    "pipeline/**/*.py": [
+      "cspell --no-progress --no-must-find-files"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }

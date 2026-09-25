@@ -124,9 +124,10 @@ npm run build && npm run test:e2e   # Playwright
 | Types      | TypeScript strict, `noUncheckedIndexedAccess`                                                                                 |
 | Spelling   | CSpell, British English                                                                                                       |
 | Dead code  | knip: unused files, exports and dependencies                                                                                  |
-| Unit tests | Vitest, coverage gates (tools 85%, WebMCP 85%, web `lib/` 80%)                                                                |
+| Unit tests | Vitest with coverage gates (tools 85%, WebMCP 85%, web `lib/` 80%); React Testing Library for components                      |
 | End to end | Playwright: journeys, a 5-width responsive matrix, WCAG 2.1 AA checks (axe) in both themes and every overlay, offline mode    |
 | Security   | CSP and security headers ([ADR 0005](docs/adr/0005-security-headers-and-csp.md)); tests fail on any CSP violation; Dependabot |
+| Git hooks  | lint-staged (format, spelling) and commitlint (Conventional Commits) on every commit                                          |
 | Pipeline   | Ruff and pytest                                                                                                               |
 
 ## Contributing

@@ -37,6 +37,9 @@ npm run dev                      # http://localhost:3000, bundled Monza 2025 dem
 npx playwright install chromium  # once, for end-to-end tests
 ```
 
+`npm install` also sets up Git hooks: each commit formats and spell-checks the files you
+changed, and the commit message must follow Conventional Commits (`feat: …`, `fix: …`).
+
 For the full archive locally: `npm run data:sync` then `npm run data:serve`
 (see [pipeline/README.md](pipeline/README.md)).
 
@@ -58,6 +61,7 @@ The in-app **Help → For developers** page covers the stack, data flow and WebM
    `feat/short-name` or `fix/short-name`.
 2. Keep each pull request to one change. Write or update tests with it:
    - logic in `packages/tools` or `apps/web/src/lib`: a Vitest unit test
+   - a shared component: a React Testing Library test in `apps/web/test/components`
    - a user-visible flow: a Playwright test in `apps/web/e2e`
    - pipeline code: a pytest in `pipeline/tests`
 3. Follow the house style:
