@@ -19,10 +19,11 @@ export const VIEW_SLUGS = [
   'help',
 ]
 
-/** vercel.json `rewrites`. Vercel serves each page at its route (/duel/), not at the file
- *  name (/duel/index.html 404s there), so the destination is the route. */
+/** vercel.json `rewrites`. Vercel serves each prerendered page at its route without the
+ *  trailing slash (x-matched-path: /duel); /duel/ and /duel/index.html both miss it after a
+ *  rewrite and fall through to the 404 page. */
 export const vercelRewrites = () =>
-  VIEW_SLUGS.map((s) => ({ source: `/${s}/:path+`, destination: `/${s}/` }))
+  VIEW_SLUGS.map((s) => ({ source: `/${s}/:path+`, destination: `/${s}` }))
 
 /** public/_redirects (Netlify, Cloudflare Pages): status 200 is a rewrite, not a redirect. */
 export const redirectsFile = () =>

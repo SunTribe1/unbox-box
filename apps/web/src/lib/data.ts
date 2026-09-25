@@ -23,11 +23,10 @@ import {
 } from '@unbox-box/tools'
 import { QueryClient, queryOptions } from '@tanstack/react-query'
 import type { z } from 'zod'
+import { DATA_BASE } from './data-base'
 
 /** All data is static JSON built by the pipeline. One query client is shared by React
  *  components and by tools (via fetchQuery), so both read from the same cache. */
-
-const DATA_BASE = process.env.NEXT_PUBLIC_DATA_BASE ?? '/data'
 
 export const queryClient = new QueryClient({
   defaultOptions: {

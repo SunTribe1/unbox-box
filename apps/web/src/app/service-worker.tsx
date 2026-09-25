@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { DATA_BASE } from '@/lib/data-base'
 
 /** Registers the offline service worker (public/sw.js) in production builds, after load so
  *  it never competes with the first paint. Where /sw.js isn't served (hosted previews under
@@ -10,8 +11,7 @@ export function ServiceWorker(): null {
     if (process.env.NODE_ENV !== 'production') return
     if (!('serviceWorker' in navigator)) return
     // Tell the worker which data host it may cache (see public/sw.js).
-    const dataBase = process.env.NEXT_PUBLIC_DATA_BASE
-    const dataOrigin = dataBase ? new URL(dataBase, location.href).origin : location.origin
+    const dataOrigin = new URL(DATA_BASE, location.href).origin
     const url = `/sw.js?data=${encodeURIComponent(dataOrigin)}`
     const register = () =>
       navigator.serviceWorker.register(url).catch((error: unknown) => {
