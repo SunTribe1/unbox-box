@@ -32,4 +32,9 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-assertion': 'off',
     },
   },
+  {
+    // Node scripts at the root (Git hook installer, configs).
+    files: ['*.mjs', '.husky/*.mjs'],
+    languageOptions: { globals: { process: 'readonly', console: 'readonly' } },
+  },
 )
