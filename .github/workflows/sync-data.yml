@@ -26,6 +26,9 @@ concurrency:
 
 jobs:
   sync:
+    # Skipped until the dataset is configured, so a fork or a fresh clone doesn't spend hours
+    # rebuilding the archive only to fail at the upload.
+    if: vars.HF_DATASET != ''
     runs-on: ubuntu-latest
     timeout-minutes: 340
     env:
