@@ -180,3 +180,23 @@ def test_tracinginsights_licence_follows_the_season():
     assert season_license(2024) == "MIT"
     assert season_license(2025) == "Apache-2.0"
     assert season_license(2026) == "Apache-2.0"
+
+
+def test_published_files_are_read_next_to_the_published_index(monkeypatch):
+    from unbox_box_pipeline import sync
+
+    seen = []
+
+    def fake_get_json(url, cache=True):
+        seen.append((url, cache))
+        if url.endswith("circuits.json"):
+            return {"monza": {"session": "2025-monza-r"}}
+        raise FileNotFoundError(url)
+
+    monkeypatch.setattr(sync, "get_json", fake_get_json)
+    base = "https://huggingface.co/datasets/me/data/resolve/main"
+    assert sync._published_file(f"{base}/index.json", "circuits.json") == {
+        "monza": {"session": "2025-monza-r"}
+    }
+    assert seen == [(f"{base}/circuits.json", False)]
+    assert sync._published_file(f"{base}/index.json", "missing.json") == {}

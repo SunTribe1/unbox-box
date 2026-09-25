@@ -56,6 +56,14 @@ def discover(source: TracingInsightsSource, seasons: list[int], sessions: list[s
     return found
 
 
+def _published_file(index_url: str, name: str) -> dict[str, Any]:
+    """Another file published next to index.json, or {} before the first publish."""
+    try:
+        return get_json(f"{index_url.rsplit('/', 1)[0]}/{name}", cache=False)
+    except FileNotFoundError:
+        return {}
+
+
 def _published_sessions(url: str) -> list[dict[str, Any]]:
     try:
         return get_json(url, cache=False).get("sessions", [])
@@ -109,7 +117,10 @@ def sync(
     if done:
         outlines = rebuild_outlines(out_dir)
         print(f"Outlines: {len(outlines)} updated", flush=True)
-        build_circuit_shapes(out_dir)
+        published_shapes = (
+            _published_file(published_index, "circuits.json") if published_index else None
+        )
+        build_circuit_shapes(out_dir, published=published_shapes)
     sessions = rebuild_index(out_dir, published)
     print(f"Index: {sessions} sessions", flush=True)
     history = build_history(out_dir) if with_history else None

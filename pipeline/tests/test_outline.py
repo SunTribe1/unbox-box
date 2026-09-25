@@ -132,3 +132,25 @@ def test_circuit_shapes_keep_the_latest_session_per_circuit_small(tmp_path):
     assert len(monza["x"]) <= 160 and len(monza["x"]) == len(monza["y"])
     assert monza["corners"] == [{"number": 1, "name": "Rettifilo", "x": 1, "y": 2}]
     assert json.loads((tmp_path / "circuits.json").read_text())["monza"] == monza
+
+
+def test_circuit_shapes_keep_published_circuits_this_run_did_not_build(tmp_path):
+    """A CI sync starts with an empty folder: it must not drop every circuit it didn't build."""
+    import json
+
+    from unbox_box_pipeline.outline import build_circuit_shapes
+
+    _session(tmp_path, "2026-baku-q", "baku", 2026, [circle()])
+    meta_path = tmp_path / "sessions/2026-baku-q/meta.json"
+    meta = json.loads(meta_path.read_text())
+    x, y = circle()
+    meta.update(track={"x": x, "y": y}, circuit={"slug": "baku"})
+    meta_path.write_text(json.dumps(meta))
+    published = {
+        "monza": {"session": "2025-monza-r", "x": [0], "y": [0]},
+        "baku": {"session": "2025-baku-r", "x": [0], "y": [0]},
+    }
+    shapes = build_circuit_shapes(tmp_path, published=published)
+    assert shapes["monza"] == published["monza"]  # kept
+    assert shapes["baku"]["session"] == "2026-baku-q"  # the new session replaces its own
+    assert set(json.loads((tmp_path / "circuits.json").read_text())) == {"baku", "monza"}
