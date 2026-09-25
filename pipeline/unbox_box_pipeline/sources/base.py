@@ -13,11 +13,9 @@ class SessionSource(Protocol):
 
     def load_session(self, season: int, event: str, session: str) -> SessionData:
         """Drivers, laps, corners and weather, without telemetry."""
-        ...
 
     def load_telemetry(self, season: int, event: str, session: str, lap: Lap) -> Telemetry:
         """Raw telemetry for one lap."""
-        ...
 
 
 __all__ = ["SessionSource", "Driver", "Lap", "SessionData", "Telemetry"]

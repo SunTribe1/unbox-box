@@ -16,6 +16,10 @@ a reply within a week, and credit in the fix if you'd like it.
 
 Only the latest `main` is supported.
 
+The site publishes this contact at
+[/.well-known/security.txt](https://unboxbox.com/.well-known/security.txt); its `Expires`
+date must be moved forward each year.
+
 ## How the project protects itself
 
 - A strict Content Security Policy and security headers on every host
