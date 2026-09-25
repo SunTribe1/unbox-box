@@ -89,13 +89,14 @@ export function FollowHud({ meta, replay }: RaceData) {
               return (
                 <Hint key={k} label={`Sector ${k + 1}: ${mark ? MARK[mark].label : 'no time'}`}>
                   <div
-                    tabIndex={0}
                     className={cn(
-                      'grid gap-0.5 rounded-md px-2 py-1.5 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      'grid gap-0.5 rounded-md px-2 py-1.5 text-center',
                       mark ? MARK[mark].className : 'bg-surface-2 text-muted-foreground',
                     )}
                   >
                     <span className="text-[10px] font-medium opacity-80">S{k + 1}</span>
+                    {/* The tooltip's meaning, for screen readers without hovering. */}
+                    <span className="sr-only">{mark ? MARK[mark].label : 'no time'}</span>
                     <span className="numeric text-sm">
                       {value != null ? value.toFixed(3) : '—'}
                     </span>

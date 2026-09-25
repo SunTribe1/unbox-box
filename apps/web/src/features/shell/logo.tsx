@@ -11,9 +11,6 @@ import {
   WORDMARK_VIEWBOX,
 } from '@/components/brand/brand-paths'
 
-/** The brand red of the "BOX" panel. */
-const BRAND_RED = '#e62424'
-
 /** The Unbox Box wordmark. The letters take the text colour, so it reads in both themes. */
 export function Wordmark({
   className,
@@ -31,7 +28,7 @@ export function Wordmark({
       aria-hidden={label ? undefined : true}
     >
       <path fill="currentColor" fillRule="evenodd" d={WORDMARK_INK} />
-      <path fill={BRAND_RED} fillRule="evenodd" d={WORDMARK_RED} />
+      <path className="fill-brand-red" fillRule="evenodd" d={WORDMARK_RED} />
     </svg>
   )
 }
@@ -39,7 +36,8 @@ export function Wordmark({
 /** The app mark: two linked boxes, white and red, on a black tile with a red edge. */
 export function Logo({ className }: { className?: string }) {
   const clip = useId()
-  const gap = { stroke: '#0a0a0b', strokeWidth: 2, paintOrder: 'stroke' } as const
+  // A thin line of tile colour where the boxes cross, so the link reads.
+  const gap = { strokeWidth: 2, paintOrder: 'stroke' } as const
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden>
       <defs>
@@ -53,13 +51,18 @@ export function Logo({ className }: { className?: string }) {
         width="61.5"
         height="61.5"
         rx="14"
-        fill="#0a0a0b"
-        stroke={BRAND_RED}
+        className="fill-brand-ink stroke-brand-red"
         strokeWidth="2.5"
       />
-      <path d={MARK_RED} fill={BRAND_RED} fillRule="evenodd" />
-      <path d={MARK_WHITE} fill="#ffffff" fillRule="evenodd" {...gap} />
-      <path d={MARK_RED} fill={BRAND_RED} fillRule="evenodd" {...gap} clipPath={`url(#${clip})`} />
+      <path d={MARK_RED} className="fill-brand-red" fillRule="evenodd" />
+      <path d={MARK_WHITE} fillRule="evenodd" {...gap} className="fill-white stroke-brand-ink" />
+      <path
+        d={MARK_RED}
+        fillRule="evenodd"
+        {...gap}
+        className="fill-brand-red stroke-brand-ink"
+        clipPath={`url(#${clip})`}
+      />
     </svg>
   )
 }

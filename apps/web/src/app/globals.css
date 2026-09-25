@@ -1,3 +1,4 @@
+/* ─── 1. Imports and variants ───────────────────────────────────────────────────────────────── */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'uplot/dist/uPlot.min.css';
@@ -13,7 +14,11 @@
  * colors for compounds. The shadcn contract (primary, card, popover, accent…) is mapped onto
  * these at the bottom of each theme so registry components match the app.
  */
+/* ─── 2. Design tokens: light theme (the source of every colour) ────────────────────────────── */
 :root {
+  /* Brand: the logo's red and its black tile. The same in both themes. */
+  --brand-red: #e62424;
+  --brand-ink: #0a0a0b;
   --radius: 0.75rem;
   --background: oklch(0.985 0.002 250);
   --surface-1: oklch(1 0 0);
@@ -95,6 +100,7 @@
   --sidebar-ring: var(--ring);
 }
 
+/* ─── 3. Design tokens: dark theme overrides ────────────────────────────────────────────────── */
 .dark {
   --background: #08090b;
   --surface-1: #101216;
@@ -129,7 +135,10 @@
   --danger: oklch(0.66 0.2 25);
 }
 
+/* ─── 4. Tailwind theme: tokens exposed as utilities (bg-signal, text-driver-a…) ────────────── */
 @theme inline {
+  --color-brand-red: var(--brand-red);
+  --color-brand-ink: var(--brand-ink);
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
@@ -250,6 +259,7 @@
  * caps above data, caption for helper text, and numeric (mono + tabular) for any figure
  * that updates, so digits never jitter.
  */
+/* ─── 5. Type scale ─────────────────────────────────────────────────────────────────────────── */
 @utility text-display {
   font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
   line-height: 1.1;
@@ -279,6 +289,7 @@
   letter-spacing: -0.01em;
 }
 
+/* ─── 6. Base element styles ────────────────────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border;
@@ -312,6 +323,7 @@
   }
 }
 
+/* ─── 7. Utilities ──────────────────────────────────────────────────────────────────────────── */
 /* Horizontal scrollers (tab strips, chip rows) that hide their scrollbar. */
 @utility no-scrollbar {
   scrollbar-width: none;
@@ -324,6 +336,7 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ─── 8. Third-party overrides ──────────────────────────────────────────────────────────────── */
 /* uPlot: let tokens drive its chrome. */
 .uplot {
   font-family: var(--font-mono);
@@ -347,6 +360,7 @@
   mix-blend-mode: normal;
 }
 
+/* ─── 9. Motion preferences ─────────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

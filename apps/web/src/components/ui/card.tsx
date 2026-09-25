@@ -35,6 +35,8 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
 
 function CardTitle({ className, ...props }: React.ComponentProps<'h2'>) {
   return (
+    // The heading's text arrives through props.children.
+    // eslint-disable-next-line jsx-a11y/heading-has-content
     <h2
       data-slot="card-title"
       className={cn(

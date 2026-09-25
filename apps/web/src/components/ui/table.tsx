@@ -5,9 +5,11 @@ import { cn } from '@/lib/utils'
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
-    // Focusable so keyboard users can scroll wide tables sideways (WCAG 2.1.1).
+    // Focusable so keyboard users can scroll wide tables sideways (WCAG 2.1.1; axe's
+    // scrollable-region-focusable), which this lint rule doesn't know about.
     <div
       data-slot="table-container"
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
       tabIndex={0}
       className="relative w-full overflow-x-auto rounded-[inherit] focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
     >
