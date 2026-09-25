@@ -42,7 +42,7 @@ jobs:
           HF_DATASET: ${{ vars.HF_DATASET }}
           FORCE: ${{ inputs.force && '--force' || '' }}
         run: >
-          uv run --with huggingface_hub unbox-box-pipeline sync
+          uv run --with 'huggingface_hub>=0.25,<2' unbox-box-pipeline sync
           --seasons 2023-2026
           --published-index "https://huggingface.co/datasets/$HF_DATASET/resolve/main/index.json"
           --publish "$HF_DATASET"

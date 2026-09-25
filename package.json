@@ -17,7 +17,7 @@
     "format": "prettier --write .",
     "data": "cd pipeline && uv run unbox-box-pipeline build --season 2025 --event \"Italian Grand Prix\" --session Qualifying --out ../apps/web/public/data && uv run unbox-box-pipeline build --season 2025 --event \"Italian Grand Prix\" --session Race --out ../apps/web/public/data",
     "data:sync": "cd pipeline && uv run unbox-box-pipeline sync",
-    "data:publish": "cd pipeline && uv run --with huggingface_hub unbox-box-pipeline publish",
+    "data:publish": "cd pipeline && uv run --with 'huggingface_hub>=0.25,<2' unbox-box-pipeline publish",
     "data:serve": "serve data --cors -l 4100 --no-clipboard",
     "dev:full": "npm run data:serve & NEXT_PUBLIC_DATA_BASE=http://localhost:4100 npm run dev",
     "format:check": "prettier --check .",

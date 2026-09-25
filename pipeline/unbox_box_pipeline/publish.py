@@ -1,12 +1,15 @@
 """Uploads the data folder to a public Hugging Face dataset, which the web app reads as its
 CDN (NEXT_PUBLIC_DATA_BASE). Hugging Face deduplicates content, so unchanged files cost no
-upload time. Needs `pip install huggingface_hub` and a write token (`hf auth login` or
-HF_TOKEN)."""
+upload time. Needs `pip install "huggingface_hub>=0.25,<2"` (2.0 removed upload_large_folder)
+and a write token (`hf auth login` or HF_TOKEN)."""
 
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
+
+# 2.0 removed upload_large_folder; the workflow and npm script pin the same range.
+HUB_REQUIREMENT = "huggingface_hub>=0.25,<2"
 
 LICENSE_FILES = Path(__file__).resolve().parents[2] / "apps" / "web" / "public" / "data"
 
@@ -36,9 +39,11 @@ def publish(out_dir: Path, repo_id: str) -> str:
     try:
         from huggingface_hub import HfApi
     except ImportError as error:
-        raise SystemExit("Install the uploader first: pip install huggingface_hub") from error
+        raise SystemExit(f"Install the uploader first: pip install '{HUB_REQUIREMENT}'") from error
 
     api = HfApi()
+    if not hasattr(api, "upload_large_folder"):
+        raise SystemExit(f"This huggingface_hub is too new; install '{HUB_REQUIREMENT}'")
     api.create_repo(repo_id, repo_type="dataset", exist_ok=True, private=False)
     for name in ("DATA_LICENSE.md", "LICENSE-APACHE-2.0.txt", "LICENSE-MIT-TracingInsights.txt"):
         if not (out_dir / name).exists():

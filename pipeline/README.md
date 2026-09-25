@@ -23,7 +23,7 @@ the app reads it from `NEXT_PUBLIC_DATA_BASE`.
 
 ```bash
 hf auth login                                      # once, with a write token
-uv run --with huggingface_hub unbox-box-pipeline publish your-name/unbox-box-data
+uv run --with 'huggingface_hub>=0.25,<2' unbox-box-pipeline publish your-name/unbox-box-data
 ```
 
 Then build the app with
