@@ -2,8 +2,14 @@ import { expect, test } from '@playwright/test'
 
 const QUALI = '/?s=2025-italian-grand-prix-q'
 
-test('opens the race replay by default', async ({ page }) => {
+test('opens Lap Duel by default, on the latest session', async ({ page }) => {
   await page.goto('/')
+  await expect(page).toHaveURL(/\/duel\//)
+  await expect(page.getByRole('combobox', { name: 'Driver A', exact: true })).toBeVisible()
+})
+
+test('the replay opens from its own path', async ({ page }) => {
+  await page.goto('/replay/')
   await expect(page.getByRole('slider', { name: 'Race time' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Running order' })).toContainText('VER')
 })
@@ -30,7 +36,7 @@ test('the Race Engineer answers the flagship question and drives the UI', async 
 })
 
 test('the Race Engineer drives the replay', async ({ page, isMobile }) => {
-  await page.goto('/')
+  await page.goto('/replay/')
   await expect(page.getByRole('slider', { name: 'Race time' })).toBeVisible()
   if (isMobile) await page.getByRole('button', { name: 'Open Race Engineer' }).click()
   const input = page.getByLabel('Ask the Race Engineer').last()

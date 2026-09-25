@@ -44,8 +44,8 @@ export function useBootstrap() {
       const meta = await queryClient.fetchQuery(metaQuery(sessionId))
       if (cancelled) return
       app.setSession(sessionId)
-      // Race sessions open on the replay unless the link says otherwise.
-      const view = url.view ?? (meta.replay ? 'replay' : 'lap-duel')
+      // Lap Duel is the front page for every session; links can name another view.
+      const view = url.view ?? 'lap-duel'
       const raceOnly = view === 'replay' || view === 'strategy'
       app.setView(raceOnly && !meta.replay ? 'lap-duel' : view)
       if (url.replayTime) usePlayback.getState().seek(url.replayTime)
