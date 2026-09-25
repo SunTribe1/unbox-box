@@ -58,7 +58,7 @@ export function TabBar() {
             >
               {active && <Pill />}
               <Icon
-                className={cn('relative size-[18px]', active && 'text-signal-ink')}
+                className={cn('relative size-[18px]', active && 'text-signal-ink glow-icon')}
                 aria-hidden
               />
               <span className="relative">{short}</span>
@@ -75,7 +75,7 @@ export function TabBar() {
         >
           {inRest && <Pill />}
           <MoreIcon
-            className={cn('relative size-[18px]', inRest && 'text-signal-ink')}
+            className={cn('relative size-[18px]', inRest && 'text-signal-ink glow-icon')}
             aria-hidden
           />
           <span className="relative">{current?.short ?? 'More'}</span>

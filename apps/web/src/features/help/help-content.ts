@@ -29,7 +29,7 @@ export const GUIDES: Guide[] = [
     view: 'replay',
     purpose: 'The whole race on the track map, with the timing tower beside it.',
     steps: [
-      'Press play, or drag the timeline. Yellow bands are safety car or VSC periods; red is a red flag.',
+      'Press play, or drag the timeline. Amber bands are safety car or VSC periods; red is a red flag.',
       'Click a driver in the tower to follow them: the heads-up display shows their speed and last-lap sectors.',
       'Race-control messages pop up as they happened.',
     ],

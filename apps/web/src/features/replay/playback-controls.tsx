@@ -21,8 +21,8 @@ import { useThrottledTime } from './use-replay'
 
 const STATUS = {
   green: { label: 'Green', className: 'bg-success/15 text-success' },
-  sc: { label: 'Safety car', className: 'bg-tyre-medium/20 text-foreground', car: true },
-  vsc: { label: 'Virtual SC', className: 'bg-tyre-medium/20 text-foreground', car: true },
+  sc: { label: 'Safety car', className: 'bg-status-sc/25 text-foreground', car: true },
+  vsc: { label: 'Virtual SC', className: 'bg-status-sc/25 text-foreground', car: true },
   red: { label: 'Red flag', className: 'bg-danger/15 text-danger' },
 } as const
 

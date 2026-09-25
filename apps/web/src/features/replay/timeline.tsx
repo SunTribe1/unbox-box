@@ -84,7 +84,7 @@ export function Timeline({ replay }: { replay: Replay }) {
             className={
               s.status === 'red'
                 ? 'absolute inset-y-0 bg-danger/25'
-                : 'absolute inset-y-0 bg-tyre-medium/20'
+                : 'absolute inset-y-0 bg-status-sc/40'
             }
             style={{ left: pct(s.from), width: `calc(${pct(s.to)} - ${pct(s.from)})` }}
             title={s.status.toUpperCase()}

@@ -16,24 +16,32 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
-        /** The one amber call to action per screen (Play, Race Engineer). */
+        /** The one red call to action per screen (Play, Race Engineer): glows on hover and focus. */
         signal:
-          'bg-signal text-signal-foreground shadow-[0_1px_0_0_oklch(1_0_0/0.25)_inset] hover:bg-signal/90',
+          'glow-hover bg-signal text-signal-foreground shadow-[0_1px_0_0_oklch(1_0_0/0.25)_inset] hover:bg-signal/90',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: 'h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5',
         lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
+        /** Landing page calls to action. */
+        xl: 'h-12 gap-2 rounded-md px-6 text-base has-[>svg]:px-5',
         icon: 'size-9',
         'icon-xs': "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
         'icon-sm': 'size-8',
         'icon-lg': 'size-10',
       },
+      /** Pill buttons on the landing page; the app keeps its rounded rectangles. */
+      shape: {
+        default: '',
+        pill: 'rounded-full',
+      },
     },
     defaultVariants: {
       variant: 'default',
       size: 'default',
+      shape: 'default',
     },
   },
 )
@@ -42,6 +50,7 @@ function Button({
   className,
   variant = 'default',
   size = 'default',
+  shape = 'default',
   asChild = false,
   ...props
 }: React.ComponentProps<'button'> &
@@ -55,7 +64,7 @@ function Button({
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, shape, className }))}
       {...props}
     />
   )

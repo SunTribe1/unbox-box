@@ -11,9 +11,9 @@
 | ----------- | ------------------------------------------------------------------------------------------ |
 | Name        | Unbox Box (working title; several GitHub repos use it, pick a distinct name before launch) |
 | One-liner   | F1 analysis your AI can drive.                                                             |
-| Brand color | Signal amber `#f5ae39` (dark) / `#e38f00` fill, `#a75c00` text (light)                     |
+| Brand color | Signal red: `#c51e21` fill (both themes); text `#fa6865` (dark) / `#b7191c` (light)        |
 | Surfaces    | Carbon dark `#08090b` → `#101216` → `#161a1f` → `#1e232a`                                  |
-| Type        | Inter Variable (UI), JetBrains Mono Variable (figures)                                     |
+| Type        | Geist Variable (UI and headings), Geist Mono Variable (figures)                            |
 | Voice       | Race-engineer calm: precise, brief, evidence first                                         |
 | Legal       | Unofficial fan project; no F1 logos, fonts or "F1" in the product name                     |
 
@@ -107,17 +107,31 @@ with a red edge, legible down to 16 px.
 | `faint-foreground`               | oklch 0.62       | oklch 0.52            | Captions, axis labels   | ≥ 4.8 / ≥ 5.0         |
 | `border` / `border-strong`       | white 7.5% / 13% | `#e3e5e8` / `#d0d3d7` | Hairlines / inputs      |                       |
 
-### Signal amber: the one brand color
+### Signal red: the one brand color
 
-Amber means **the Race Engineer, focus and the one primary action on a screen** (Play,
-Race Engineer, Send). Nothing else is amber, so it always reads as "act here".
+Red is the logo's colour, and in the UI it means **the Race Engineer, focus, the current
+selection and the one primary action on a screen** (Play, Race Engineer, Send). The fill is a
+shade deeper than the logo red (`#e62424`), because white text on the logo red is only 4.4:1.
 
-| Token               | Dark      | Light     | Rule                                                      |
-| ------------------- | --------- | --------- | --------------------------------------------------------- |
-| `signal`            | `#f5ae39` | `#e38f00` | Fills, rings, the leader halo                             |
-| `signal-foreground` | `#1f1306` | `#1c140c` | Text on amber (9.5:1 / 7.1:1)                             |
-| `signal-ink`        | = signal  | `#a75c00` | Amber **text** (light-theme amber fails as text at 2.6:1) |
-| `signal-soft`       | amber 14% | amber 14% | Selected rows, active corner band                         |
+| Token               | Dark        | Light     | Rule                                                     |
+| ------------------- | ----------- | --------- | -------------------------------------------------------- |
+| `signal`            | `#c51e21`   | `#c51e21` | Fills, rings, markers, the leader halo                   |
+| `signal-foreground` | white       | white     | Text on red (5.9:1)                                      |
+| `signal-ink`        | `#fa6865`   | `#b7191c` | Red **text** (6.7:1 on dark, 6.6:1 on white)             |
+| `signal-soft`       | red 16%     | red 10%   | Selected rows, active corner band                        |
+| `ring`              | `#fc5855`   | `#cc2827` | Focus outlines (≥ 3:1 against the surface)               |
+| `glow`              | red, bright | red       | Decorative light only; never the only carrier of meaning |
+
+**Light effects.** Red light is used sparingly and only on interactive or active things:
+
+- `glow-hover`: the primary button, the Send button and clickable cards glow red, with a soft
+  highlight from the top edge, on hover and keyboard focus.
+- `glow-dot`: small active markers (the rail marker, the Race Engineer's live dot).
+- `glow-icon`: the active navigation icon; the loading bar under the top bar.
+- Active tabs are underlined in red.
+
+Glows live on pseudo-elements, so only opacity animates, and reduced motion removes the fade.
+No glow on text, headings or data.
 
 ### Data colors
 
@@ -135,7 +149,8 @@ Data colors always carry meaning and never decorate.
 - **Tyres**: soft `#ff3b4f`, medium `#ffd23f`, hard `#e4e7ea`, inter `#45d06a`, wet
   `#3d8bff` (dark values). Always paired with the compound letter (S/M/H/I/W).
 - **Status**: success green for "gained a place / green flag", danger red for errors and
-  "lost a place", amber-tinted bands for SC/VSC periods.
+  "lost a place", amber bands and badges for SC/VSC periods (`status-sc`, never the accent
+  red or the medium-tyre yellow).
 - Never rely on color alone: B is dashed, tyres carry letters, gains carry ▲/▼ and signs.
 
 | Team              | Dark      | Light     |
@@ -159,9 +174,9 @@ Data colors always carry meaning and never decorate.
 
 Two faces, self-hosted (no third-party requests):
 
-- **Inter Variable** for all interface text. Features `cv11 ss01 ss03 cv05`
-  (single-storey a, open digits, clear l/I), optical sizing on.
-- **JetBrains Mono Variable** for every figure that is compared or updates: lap times, gaps,
+- **Geist Variable** (Vercel, SIL OFL 1.1) for all interface text and headings: geometric,
+  crisp at small sizes, with a slightly tightened default tracking (−0.006em).
+- **Geist Mono Variable** for every figure that is compared or updates: lap times, gaps,
   speeds, positions, laps, codes. Applied with the `numeric` utility (mono + tabular figures),
   so digits never shift width while animating.
 
@@ -172,6 +187,23 @@ Two faces, self-hosted (no third-party requests):
 | body           | 14 px           | 400    | 1.5     | 0        | Default text                          |
 | `text-caption` | 12 px           | 400    | 1.45    | 0        | Helper text, descriptions             |
 | `text-label`   | 11 px uppercase | 550    | 1.2     | +0.08em  | Small caps above data (GAP, PIT LANE) |
+
+**Marketing scale** (landing page only). Light and tightly tracked: the headline carries the
+page by size, not weight.
+
+| Utility         | Size            | Weight | Leading | Tracking | Use                                    |
+| --------------- | --------------- | ------ | ------- | -------- | -------------------------------------- |
+| `text-hero`     | 48–112 px fluid | 300    | 0.92    | −0.05em  | The one hero headline                  |
+| `text-headline` | 32–52 px fluid  | 300    | 1.05    | −0.035em | Every section heading, the closing CTA |
+| `text-subhead`  | 24–34 px fluid  | 300    | 1.12    | −0.025em | Feature titles, HUD figures            |
+| `text-lead`     | 17 px           | 400    | 1.65    | 0        | Every intro paragraph                  |
+| `text-eyebrow`  | 11 px mono caps | 400    | 1.3     | +0.14em  | Chips, HUD labels, window titles       |
+
+**Buttons.** Sizes come from the `Button` component only, never from class overrides: `sm` for
+bars, `default` in the app, `xl` for landing calls to action. `shape="pill"` on the landing page;
+the app keeps rounded rectangles. One `signal` (red) button per screen; the second action is
+`outline`. Text links on the landing page are `ArrowLink`: red, medium weight, an arrow that
+nudges on hover (up-right for external pages).
 
 Rules: one title per card; labels sit above the figure they name; headings use
 `text-wrap: balance`, paragraphs `pretty`; prose max ~70 characters per line; never mono for
@@ -222,7 +254,8 @@ Motion explains change; it never decorates. Presets live in `lib/motion.ts`.
 ## 10. Consistency checklist (run before a release)
 
 - [ ] Only tokens in components; no raw hex outside `globals.css` and `lib/teams.ts`
-- [ ] One amber action per screen; amber text uses `text-signal-ink`
+- [ ] One red action per screen; red text uses `text-signal-ink`; glows only on interactive
+      or active elements
 - [ ] Small text ≥ 4.5:1; lines and marks ≥ 3:1 in both themes
 - [ ] Figures in `numeric`; titles in sentence case; British spelling
 - [ ] Drivers colored by team (History excepted); teammates dashed

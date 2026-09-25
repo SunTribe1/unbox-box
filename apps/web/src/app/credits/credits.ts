@@ -70,10 +70,9 @@ export const ASSETS: Credit[] = [
     href: 'https://github.com/lipis/flag-icons',
     license: 'MIT',
   },
-  { name: 'Inter, by Rasmus Andersson', href: 'https://github.com/rsms/inter', license: 'OFL-1.1' },
   {
-    name: 'JetBrains Mono',
-    href: 'https://github.com/JetBrains/JetBrainsMono',
+    name: 'Geist and Geist Mono, by Vercel',
+    href: 'https://github.com/vercel/geist-font',
     license: 'OFL-1.1',
   },
   {
@@ -178,6 +177,7 @@ export const DEV_TOOLS: Credit[] = [
     href: 'https://github.com/typicode/husky',
     license: 'MIT',
   },
+  { name: 'Stylelint', href: 'https://github.com/stylelint/stylelint', license: 'MIT' },
 ]
 
 /** Attribution in the form each data licence asks for: title, author, source, licence and
