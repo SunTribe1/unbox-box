@@ -1,18 +1,37 @@
 # Weekly dependency updates, grouped so they arrive as a few reviewable pull requests.
+# Security updates are not affected by the ignores below; they always arrive.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 5
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # Major upgrades of the toolchain need a planned migration (the Next.js ESLint config
+      # and the TypeScript 7 compiler), not an automatic bump.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
+      - dependency-name: '@eslint/js'
+        update-types: [version-update:semver-major]
   - package-ecosystem: pip
     directory: /pipeline
     schedule:
       interval: weekly
+    groups:
+      python:
+        patterns: ['*']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      # One pull request for all actions, so paired steps (codeql-action init and analyze)
+      # always move together.
+      actions:
+        patterns: ['*']
