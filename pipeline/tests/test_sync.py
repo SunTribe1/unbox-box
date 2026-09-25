@@ -140,8 +140,9 @@ def test_empty_telemetry_is_not_usable():
 
 
 def test_cache_files_are_unique_but_keep_a_prunable_prefix():
-    from unbox_box_pipeline.http import _cache_file
+    from unbox_box_pipeline import http
 
+    _cache_file = http._cache_file
     base = "https://raw.githubusercontent.com/TracingInsights/2025/main/" + "x" * 300
     a, b = _cache_file(base + "/1_tel.json"), _cache_file(base + "/2_tel.json")
     assert a != b
@@ -149,7 +150,7 @@ def test_cache_files_are_unique_but_keep_a_prunable_prefix():
 
 
 def test_prune_removes_only_that_session(tmp_path, monkeypatch):
-    import unbox_box_pipeline.http as http
+    from unbox_box_pipeline import http
 
     monkeypatch.setattr(http, "CACHE_DIR", tmp_path)
     keep = "https://raw.githubusercontent.com/TracingInsights/2025/main/Italian%20Grand%20Prix/Race/VER/1_tel.json"

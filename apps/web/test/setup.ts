@@ -10,6 +10,7 @@ afterEach(() => {
 // jsdom lacks the layout APIs Radix primitives call; a no-op is enough for behaviour tests.
 if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
   window.ResizeObserver = class {
+    constructor(_callback: ResizeObserverCallback) {}
     observe() {}
     unobserve() {}
     disconnect() {}

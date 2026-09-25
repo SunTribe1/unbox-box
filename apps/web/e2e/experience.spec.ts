@@ -80,7 +80,7 @@ test('views have their own paths, and Back returns to the previous view', async 
   const duel = '/duel/2025-italian-grand-prix-q/LEC-16-vs-HAM-16/?corner=11'
   await page.goto(duel)
   await expect(page.getByRole('combobox', { name: 'Driver A', exact: true })).toContainText('LEC')
-  await expect(page).toHaveURL(new RegExp(`${duel.replace(/[?]/g, '\\?')}$`))
+  await expect(page).toHaveURL((url) => `${url.pathname}${url.search}` === duel)
   await page.goto('/history/')
   await expect(page.getByRole('tab', { name: /Drivers/ })).toBeVisible()
   await page.getByRole('tab', { name: /Drivers/ }).click()

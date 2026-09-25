@@ -1,0 +1,6 @@
+# Unbox Box security contact (RFC 9116). See SECURITY.md in the repository.
+Contact: https://github.com/SunTribe1/unbox-box/security/advisories/new
+Policy: https://github.com/SunTribe1/unbox-box/blob/main/SECURITY.md
+Canonical: https://unboxbox.com/.well-known/security.txt
+Preferred-Languages: en
+Expires: 2027-09-25T00:00:00.000Z
