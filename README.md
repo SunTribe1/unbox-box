@@ -48,8 +48,9 @@ an AI agent that supports **WebMCP** can call the same 27 tools directly.
 | **Race Engineer**    | Plain-English questions → typed tool calls → answers, with the page changing as it works                           |
 | **Help & feedback**  | A guide to every page, colours and terms, a developer guide, and a bug-report form                                 |
 
-Everywhere: shareable links for every view, ⌘K search, keyboard shortcuts, dark and light
-themes, reduced motion, installable, works offline.
+Everywhere: a clean, shareable link for every page (`/races/1988/3/qualifying/`,
+`/duel/2025-italian-grand-prix-q/LEC-16-vs-HAM-16/`), ⌘K search, keyboard shortcuts, dark and
+light themes, reduced motion, installable, works offline.
 
 <table>
   <tr>
@@ -78,6 +79,12 @@ The full archive (every session since 2023) is served from a Hugging Face datase
 [pipeline/README.md](pipeline/README.md)). All settings are in
 [apps/web/.env.example](apps/web/.env.example).
 
+## Deploy
+
+It's a static site, free to host. [docs/deploy.md](docs/deploy.md) covers Vercel (root
+directory `apps/web`, three optional environment variables), Netlify, Cloudflare Pages, the
+Hugging Face data set-up and the GitHub repository settings.
+
 ## How it works
 
 ```mermaid
@@ -96,8 +103,11 @@ flowchart LR
   on load and cached for offline use.
 - **One tool registry.** Buttons, the command engine and browser agents call the same typed
   functions, so what an agent does is exactly what a click does.
+- **Real URLs on a static host.** One page per view; the host rewrites deeper paths to it and
+  the app reads the rest of the path, so every page has a clean link that survives a reload.
 - **Decisions are written down** in [docs/adr](docs/adr): static data, the tool registry,
-  lap-delta alignment, data hosting, security headers, archive files, feedback without a backend.
+  lap-delta alignment, data hosting, security headers, archive files, feedback without a backend,
+  path URLs on a static host.
 
 | Package           | Role                                                                          |
 | ----------------- | ----------------------------------------------------------------------------- |
@@ -117,22 +127,23 @@ npm run test:coverage   # unit tests with coverage gates
 npm run build && npm run test:e2e   # Playwright
 ```
 
-| Check      | Tool                                                                                                                          |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Formatting | Prettier with the Tailwind class-order plugin                                                                                 |
-| Lint       | ESLint (Next.js rules for the app, typescript-eslint strict for packages)                                                     |
-| Types      | TypeScript strict, `noUncheckedIndexedAccess`                                                                                 |
-| Spelling   | CSpell, British English                                                                                                       |
-| Dead code  | knip: unused files, exports and dependencies                                                                                  |
-| Unit tests | Vitest with coverage gates (tools 85%, WebMCP 85%, web `lib/` 80%); React Testing Library for components                      |
-| End to end | Playwright: journeys, a 5-width responsive matrix, WCAG 2.1 AA checks (axe) in both themes and every overlay, offline mode    |
-| Security   | CSP and security headers ([ADR 0005](docs/adr/0005-security-headers-and-csp.md)); tests fail on any CSP violation; Dependabot |
-| Git hooks  | lint-staged (format, spelling) and commitlint (Conventional Commits) on every commit                                          |
-| Pipeline   | Ruff and pytest                                                                                                               |
+| Check      | Tool                                                                                                                                                                                                 |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Formatting | Prettier with the Tailwind class-order plugin                                                                                                                                                        |
+| Lint       | ESLint (Next.js rules for the app, typescript-eslint strict for packages)                                                                                                                            |
+| Types      | TypeScript strict, `noUncheckedIndexedAccess`                                                                                                                                                        |
+| Spelling   | CSpell, British English                                                                                                                                                                              |
+| Dead code  | knip: unused files, exports and dependencies                                                                                                                                                         |
+| Unit tests | Vitest with coverage gates (tools 85%, WebMCP 85%, web `lib/` 80%); React Testing Library for components                                                                                             |
+| End to end | Playwright: journeys, a 5-width responsive matrix, WCAG 2.1 AA checks (axe) in both themes and every overlay, offline mode                                                                           |
+| Security   | CSP and security headers ([ADR 0005](docs/adr/0005-security-headers-and-csp.md)); tests fail on any CSP violation; CodeQL; dependency review; `npm audit`; SHA-pinned, read-only Actions; Dependabot |
+| Git        | lint-staged and commitlint hooks; CI lints every commit and pull request title; `main` protected by a [ruleset](.github/rulesets/main.json)                                                          |
+| Pipeline   | Ruff and pytest                                                                                                                                                                                      |
 
 ## Contributing
 
-Contributions are welcome: bug fixes, features, data corrections, docs. Start with
+Contributions are welcome: bug fixes, features, data corrections, docs. `main` is protected:
+every change is a reviewed, squash-merged pull request with green CI. Start with
 [CONTRIBUTING.md](CONTRIBUTING.md), and look for issues labelled
 [good first issue](https://github.com/SunTribe1/unbox-box/labels/good%20first%20issue).
 Please read the [code of conduct](CODE_OF_CONDUCT.md), and report security problems privately

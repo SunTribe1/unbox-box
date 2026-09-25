@@ -7,6 +7,26 @@ All notable changes are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Clean URLs: what a page shows is in the path (`/races/1988/3/qualifying/`,
+  `/duel/2025-italian-grand-prix-q/LEC-16-vs-HAM-16/`, `/history/drivers/ayrton-senna/`), with
+  view settings in the query. Older query links still open. Hosts rewrite deep paths to each
+  view's page (Vercel, Netlify, Cloudflare Pages, `serve`), and the service worker caches one
+  copy per view.
+- The data build workflow uploads an artifact instead of pushing to `main`.
+
+### Added
+
+- Branch protection ruleset for `main`, a pull request workflow (commit and title lint,
+  dependency review) and CodeQL for TypeScript, Python and the workflows.
+- A deployment guide (`docs/deploy.md`) and a stricter contributing guide.
+
+### Security
+
+- GitHub Actions pinned to commit SHAs, checkouts without persisted credentials, job
+  timeouts, `npm audit` in CI and `uv sync --locked` for the pipeline.
+
 ## [0.1.0] - 2026-09-24
 
 ### Added

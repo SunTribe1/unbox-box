@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { COMMANDS, FLOW, LAYOUT, SOURCES, STACK, WEBMCP_STEPS } from './developer-content'
+import { COMMANDS, FLOW, LAYOUT, ROUTES, SOURCES, STACK, WEBMCP_STEPS } from './developer-content'
 import { REPO_URL } from '@/lib/site'
 import { Section } from './help-parts'
 
@@ -281,6 +281,27 @@ function Code() {
             </dl>
           </CardContent>
         </Card>
+        <Card className="@min-[1000px]:col-span-2">
+          <CardHeader>
+            <CardTitle>Links</CardTitle>
+            <CardDescription>
+              Every page has its own address. The host serves each view&apos;s page for any path
+              under it, and older query links still open.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <dl className="grid gap-2 text-sm @min-[700px]:grid-cols-2">
+              {ROUTES.map(([example, what]) => (
+                <div key={example} className="grid min-w-0 gap-0.5">
+                  <dt>
+                    <code className="font-mono text-caption break-all">{example}</code>
+                  </dt>
+                  <dd className="text-muted-foreground">{what}</dd>
+                </div>
+              ))}
+            </dl>
+          </CardContent>
+        </Card>
       </div>
     </Section>
   )
@@ -300,12 +321,19 @@ function Contributing() {
               Open an issue first for anything bigger than a small fix, so we can agree the
               approach.
             </li>
-            <li>Fork, branch from main, and keep each pull request to one change.</li>
+            <li>Fork, branch from main, and keep each pull request to one change, with tests.</li>
             <li>
               Run <code className="font-mono text-caption">npm run check</code> and the Playwright
-              suite before pushing; CI runs the same.
+              suite before pushing; CI runs the same, plus CodeQL and dependency review.
             </li>
-            <li>Use conventional commit messages: feat, fix, refactor, docs, test, chore.</li>
+            <li>
+              Conventional commit messages and pull request titles (feat, fix, refactor, docs, test,
+              chore, perf, ci); the title becomes the squash commit.
+            </li>
+            <li>
+              main is protected: a code owner approves, every check passes, conversations are
+              resolved, then the pull request is squash-merged.
+            </li>
             <li>
               Only add data, code or assets whose licence allows it, and credit them in the Credits
               list; the unit tests fail if a dependency has no credit.

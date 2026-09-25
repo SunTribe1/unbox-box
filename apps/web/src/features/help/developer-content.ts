@@ -12,7 +12,7 @@ export const STACK: StackRow[] = [
   {
     layer: 'Framework',
     tech: 'Next.js 16 (static export), React 19',
-    usedFor: 'Pages, routing (/duel/, /races/...), prerendered HTML served as plain files',
+    usedFor: 'Pages, one per view (/duel/, /races/...), prerendered HTML served as plain files',
     license: 'MIT',
   },
   {
@@ -171,11 +171,31 @@ export const LAYOUT: [path: string, what: string][] = [
     'packages/webmcp',
     'The only code that touches the WebMCP API, so spec changes stay in one file',
   ],
+  [
+    'apps/web/scripts',
+    'Build scripts: security headers and deep-link rewrites for every host, third-party notices',
+  ],
   ['pipeline', 'Python: sources, alignment, replay, history and archive builders, publishing'],
   [
     'docs/adr',
     'Architecture decisions: static data, one tool registry, lap-delta alignment, data on Hugging Face',
   ],
+  ['docs/deploy.md', 'Hosting on Vercel or any static host, the data set-up, repository settings'],
+  ['.github', 'CI, pull request checks, CodeQL, the branch protection ruleset, issue templates'],
+]
+
+/** The URL scheme (src/lib/routes.ts): what a page shows is in the path, settings in the query. */
+export const ROUTES: [example: string, what: string][] = [
+  ['/duel/2025-italian-grand-prix-q/LEC-16-vs-HAM-16/?corner=11', 'Two laps, zoomed to a corner'],
+  ['/replay/2025-italian-grand-prix-r/?at=1834&follow=NOR', 'A race at a moment, following a car'],
+  ['/strategy/2025-italian-grand-prix-r/', 'Strategy Lab for a race'],
+  ['/history/drivers/ayrton-senna/', 'A driver profile (or /history/teams/…)'],
+  ['/history/head-to-head/max-verstappen-vs-lando-norris/', 'A head-to-head'],
+  ['/races/1988/3/qualifying/', 'A season, a weekend, a session'],
+  ['/circuits/monza/', 'A circuit'],
+  ['/records/teams/wins/?era=1990s', 'A leaderboard, filtered by era'],
+  ['/engines/honda/ · /engines/tyres/pirelli/', 'An engine or tyre maker'],
+  ['/nations/nl/', 'A nation'],
 ]
 
 export const COMMANDS: [command: string, what: string][] = [
