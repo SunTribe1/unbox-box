@@ -90,7 +90,7 @@ more detail.
 5. **Run what CI runs** before you push:
 
    ```bash
-   npm run check          # format, lint, types, spelling, dead code, unit tests
+   npm run check          # format, lint (ESLint, Stylelint), types, spelling, dead code, unit tests
    npm run test:coverage  # coverage gates
    npm run build && npm run test:e2e
    cd pipeline && uv run ruff check . && uv run ruff format --check . && uv run pytest -q
