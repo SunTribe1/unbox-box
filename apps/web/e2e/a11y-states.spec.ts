@@ -1,11 +1,11 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Page } from '@playwright/test'
-import { PAGES, ready } from './support/pages'
+import { PAGES, ready, settled } from './support/pages'
 
 const WCAG_AA = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 
 async function seriousViolations(page: Page, include?: string) {
-  await page.waitForTimeout(500) // let entrance animations reach full opacity
+  await settled(page)
   const builder = new AxeBuilder({ page }).withTags(WCAG_AA)
   if (include) builder.include(include)
   const { violations } = await builder.analyze()

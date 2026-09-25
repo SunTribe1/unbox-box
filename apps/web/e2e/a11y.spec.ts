@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { PAGES, ready } from './support/pages'
+import { PAGES, ready, settled } from './support/pages'
 
 for (const page of PAGES) {
   test(`${page.name} has no serious accessibility problems`, async ({ page: p }) => {
@@ -17,8 +17,7 @@ for (const page of PAGES) {
     })
     await p.goto(page.path)
     await ready(p, page)
-    // Let entrance animations settle so contrast is measured at full opacity.
-    await p.waitForTimeout(600)
+    await settled(p)
     const { violations } = await new AxeBuilder({ page: p })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .analyze()
