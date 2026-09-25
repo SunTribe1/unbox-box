@@ -1,6 +1,6 @@
 // Unbox Box motorsport icons. One style: 24px grid, 1.5 stroke, round caps and joins,
 // currentColor, parallel strokes at least 2.5 units apart. Same API shape as lucide-react,
-// so they drop in anywhere a lucide icon does. Preview: docs/icon-set.html
+// so they drop in anywhere a lucide icon does. Preview: docs/brand/icon-set.html
 import { forwardRef, type SVGProps } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -23,7 +23,7 @@ function createIcon(name: string, body: React.ReactNode) {
         strokeLinecap="round"
         strokeLinejoin="round"
         aria-hidden={props['aria-label'] ? undefined : true}
-        className={cn('pw-icon', `pw-icon-${name}`, className)}
+        className={cn('icon', `icon-${name}`, className)}
         {...props}
       >
         {body}
