@@ -7,6 +7,7 @@ import type * as React from 'react'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { queryClient } from '@/lib/data'
+import { StartLights } from '@/features/start-lights/start-lights'
 import { ServiceWorker } from './service-worker'
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <MotionConfig reducedMotion="user">
             <TooltipProvider>
               {children}
+              <StartLights />
               <Toaster position="bottom-center" />
               <ServiceWorker />
             </TooltipProvider>

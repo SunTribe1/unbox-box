@@ -2,10 +2,30 @@ import { expect, test } from '@playwright/test'
 
 const QUALI = '/?s=2025-italian-grand-prix-q'
 
-test('opens Lap Duel by default, on the latest session', async ({ page }) => {
+test('the landing page starts the lights and opens Lap Duel', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1, name: 'Every lap, unboxed.' })).toBeVisible()
+  await page.getByRole('button', { name: 'Lights out: start a lap duel' }).click()
+  // The start lights cover the page change, then go out once the duel has loaded.
+  await expect(page.getByRole('status', { name: /Loading Lap Duel|Lights out/ })).toBeVisible()
   await expect(page).toHaveURL(/\/duel\//)
+  await expect(page.getByRole('status', { name: /Loading Lap Duel|Lights out/ })).toBeHidden({
+    timeout: 12_000,
+  })
   await expect(page.getByRole('combobox', { name: 'Driver A', exact: true })).toBeVisible()
+})
+
+test('the lights name the view they are loading', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Watch a race replay' }).first().click()
+  await expect(page.getByRole('status', { name: /Loading Race Replay|Lights out/ })).toBeVisible()
+  await expect(page).toHaveURL(/\/replay\//)
+  await expect(page.getByRole('slider', { name: 'Race time' })).toBeVisible({ timeout: 12_000 })
+})
+
+test('links from before the landing page still open the app', async ({ page }) => {
+  await page.goto(QUALI)
+  await expect(page.getByText('1:18.792').first()).toBeVisible()
 })
 
 test('the replay opens from its own path', async ({ page }) => {

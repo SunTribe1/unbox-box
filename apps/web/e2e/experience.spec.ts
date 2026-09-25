@@ -190,3 +190,15 @@ test('a report sends and confirms (form service mocked)', async ({ page }) => {
   await expect(page.getByText('Thanks, your report is in.')).toBeVisible()
   expect(sent).toContain('Replay stutters at 64x')
 })
+
+test('the logo inside the app goes to Lap Duel, not the landing page', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'the rail and full wordmark show from tablet width up')
+  await page.goto('/races/1988/')
+  await expect(page.getByRole('heading', { name: /1988 season/ })).toBeVisible()
+  await page.getByRole('link', { name: 'Unbox Box: Lap Duel' }).first().click()
+  await expect(page).toHaveURL(/\/duel\//)
+  await expect(page.getByRole('combobox', { name: 'Driver A', exact: true })).toBeVisible()
+})
