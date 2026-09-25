@@ -17,7 +17,8 @@ tens of thousands, and new sessions arrive every weekend.
 - What a page shows goes in the path; view settings stay in the query:
   `/duel/2026-italian-grand-prix-r/ANT-53-vs-RUS-51/?corner=10`,
   `/races/1988/3/qualifying/`, `/history/drivers/ayrton-senna/`, `/engines/tyres/pirelli/`.
-- Each host rewrites `/<view>/*` to `/<view>/index.html`, and the app reads the rest of the path
+- Each host rewrites `/<view>/*` to the view's page (`/<view>/` on Vercel, `/<view>/index.html`
+  elsewhere), and the app reads the rest of the path
   on load (`apps/web/src/lib/routes.ts`). Real files always win, so Next.js's own
   `/<view>/__next.*.txt` files and assets are unaffected.
 - One script (`apps/web/scripts/host-config.mjs`) writes the rewrites for Vercel
