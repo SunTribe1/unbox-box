@@ -6,43 +6,43 @@
   "trailingSlash": true,
   "rewrites": [
     {
-      "source": "/duel/:path+",
+      "source": "/duel/(.+)",
       "destination": "/duel/index.html"
     },
     {
-      "source": "/replay/:path+",
+      "source": "/replay/(.+)",
       "destination": "/replay/index.html"
     },
     {
-      "source": "/strategy/:path+",
+      "source": "/strategy/(.+)",
       "destination": "/strategy/index.html"
     },
     {
-      "source": "/history/:path+",
+      "source": "/history/(.+)",
       "destination": "/history/index.html"
     },
     {
-      "source": "/circuits/:path+",
+      "source": "/circuits/(.+)",
       "destination": "/circuits/index.html"
     },
     {
-      "source": "/races/:path+",
+      "source": "/races/(.+)",
       "destination": "/races/index.html"
     },
     {
-      "source": "/records/:path+",
+      "source": "/records/(.+)",
       "destination": "/records/index.html"
     },
     {
-      "source": "/engines/:path+",
+      "source": "/engines/(.+)",
       "destination": "/engines/index.html"
     },
     {
-      "source": "/nations/:path+",
+      "source": "/nations/(.+)",
       "destination": "/nations/index.html"
     },
     {
-      "source": "/help/:path+",
+      "source": "/help/(.+)",
       "destination": "/help/index.html"
     }
   ],

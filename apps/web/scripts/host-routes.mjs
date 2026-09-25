@@ -19,9 +19,11 @@ export const VIEW_SLUGS = [
   'help',
 ]
 
-/** vercel.json `rewrites` (served as static files, see host-config.mjs). */
+/** vercel.json `rewrites` (served as static files, see host-config.mjs). A regex source, as
+ *  in Vercel's static-site example: with trailingSlash every deep link ends in "/", which
+ *  `/duel/:path+` does not match. Real files are served before rewrites apply. */
 export const vercelRewrites = () =>
-  VIEW_SLUGS.map((s) => ({ source: `/${s}/:path+`, destination: `/${s}/index.html` }))
+  VIEW_SLUGS.map((s) => ({ source: `/${s}/(.+)`, destination: `/${s}/index.html` }))
 
 /** public/_redirects (Netlify, Cloudflare Pages): status 200 is a rewrite, not a redirect. */
 export const redirectsFile = () =>
