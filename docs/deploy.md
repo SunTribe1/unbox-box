@@ -82,9 +82,10 @@ allowed by the Content Security Policy.
 ## 3. Hosting on Vercel
 
 1. Vercel → **Add New… → Project** → import `unbox-box` from GitHub.
-2. **Root Directory:** `apps/web`. Framework preset: **Next.js** (detected). Leave the build and
-   output settings at their defaults; the build runs `npm run build`, which also writes the
-   security headers and deep-link rewrites into `apps/web/vercel.json`.
+2. **Root Directory:** `apps/web`. Leave the framework, build and output settings at their
+   defaults: `apps/web/vercel.json` overrides them, serving the export as plain static files
+   (`framework: null`, output `out`) so its deep-link rewrites apply. The build runs
+   `npm run build`, which also writes that file's security headers and rewrites.
 3. **Node.js version:** 22.x or later (Settings → Build and Deployment).
 4. **Environment variables** (Settings → Environment Variables), for Production and Preview:
 

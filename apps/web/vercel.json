@@ -1,45 +1,49 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "out",
+  "trailingSlash": true,
   "rewrites": [
     {
       "source": "/duel/:path+",
-      "destination": "/duel"
+      "destination": "/duel/index.html"
     },
     {
       "source": "/replay/:path+",
-      "destination": "/replay"
+      "destination": "/replay/index.html"
     },
     {
       "source": "/strategy/:path+",
-      "destination": "/strategy"
+      "destination": "/strategy/index.html"
     },
     {
       "source": "/history/:path+",
-      "destination": "/history"
+      "destination": "/history/index.html"
     },
     {
       "source": "/circuits/:path+",
-      "destination": "/circuits"
+      "destination": "/circuits/index.html"
     },
     {
       "source": "/races/:path+",
-      "destination": "/races"
+      "destination": "/races/index.html"
     },
     {
       "source": "/records/:path+",
-      "destination": "/records"
+      "destination": "/records/index.html"
     },
     {
       "source": "/engines/:path+",
-      "destination": "/engines"
+      "destination": "/engines/index.html"
     },
     {
       "source": "/nations/:path+",
-      "destination": "/nations"
+      "destination": "/nations/index.html"
     },
     {
       "source": "/help/:path+",
-      "destination": "/help"
+      "destination": "/help/index.html"
     }
   ],
   "headers": [
