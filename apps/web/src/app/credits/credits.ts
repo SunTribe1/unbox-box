@@ -167,6 +167,17 @@ export const DEV_TOOLS: Credit[] = [
   { name: 'knip', href: 'https://github.com/webpro-nl/knip', license: 'ISC' },
   { name: 'Ruff', href: 'https://github.com/astral-sh/ruff', license: 'MIT' },
   { name: 'pytest', href: 'https://github.com/pytest-dev/pytest', license: 'MIT' },
+  {
+    name: 'React Testing Library, user-event, jest-dom',
+    href: 'https://github.com/testing-library/react-testing-library',
+    license: 'MIT',
+  },
+  { name: 'jsdom', href: 'https://github.com/jsdom/jsdom', license: 'MIT' },
+  {
+    name: 'Husky, lint-staged, commitlint',
+    href: 'https://github.com/typicode/husky',
+    license: 'MIT',
+  },
 ]
 
 /** Attribution in the form each data licence asks for: title, author, source, licence and

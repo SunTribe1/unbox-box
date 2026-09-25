@@ -6,7 +6,9 @@ export default defineConfig({
   // The app's tsconfig preserves JSX for Next; tests compile it themselves.
   oxc: { jsx: { runtime: 'automatic' } },
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.{ts,tsx}'],
+    // Component tests opt into a browser-like DOM with `// @vitest-environment jsdom`.
+    setupFiles: ['test/setup.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/lib/**/*.ts'],
