@@ -46,6 +46,4 @@ Changes made by Unbox Box:
 
 ## Trademarks
 
-Unofficial fan project, not affiliated with Formula 1 companies. F1, FORMULA ONE, FORMULA 1,
-FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trademarks of Formula One
-Licensing B.V.
+Unbox Box is an unofficial, non-commercial fan project and is not associated in any way with the Formula 1 companies. F1, FORMULA ONE, FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are trade marks of Formula One Licensing B.V. All other names are trade marks of their respective owners, who do not endorse Unbox Box. Full notice: https://unboxbox.com/credits/

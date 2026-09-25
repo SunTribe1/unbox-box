@@ -20,6 +20,7 @@ import { ShortcutsDialog } from './shortcuts-dialog'
 import { Sidebar } from './sidebar'
 import { TabBar } from './tab-bar'
 import { TopBar } from './top-bar'
+import { DISCLAIMER_SHORT } from '@/lib/legal'
 
 // Each view is its own chunk: opening the app loads only the view on screen.
 function ViewSkeleton() {
@@ -160,12 +161,11 @@ export function AppShell() {
               <CurrentView />
             </div>
             <footer className="mt-8 border-t pt-4 pb-2 text-[11px] leading-relaxed text-faint-foreground">
-              Unofficial fan project, not affiliated with Formula 1 companies. F1, FORMULA ONE,
-              FORMULA 1, FIA FORMULA ONE WORLD CHAMPIONSHIP, GRAND PRIX and related marks are
-              trademarks of Formula One Licensing B.V. Data: TracingInsights (MIT, Apache-2.0), F1DB
-              (CC BY 4.0). Flags: flag-icons (MIT).{' '}
+              {DISCLAIMER_SHORT} All other names are trade marks of their respective owners, who do
+              not endorse this app. Data: TracingInsights (MIT, Apache-2.0), F1DB (CC BY 4.0).
+              Flags: flag-icons (MIT).{' '}
               <Link href="/credits/" className="underline underline-offset-2 hover:text-foreground">
-                Credits
+                Credits and full disclaimer
               </Link>
             </footer>
           </div>

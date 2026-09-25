@@ -2,6 +2,7 @@ import { tools } from '@unbox-box/tools'
 import { NAV } from '@/features/shell/nav'
 import { VIEW_SLUG } from '@/lib/routes'
 import { VIEW_META } from '@/lib/view-meta'
+import { DISCLAIMER } from '@/lib/legal'
 
 export const dynamic = 'force-static'
 
@@ -30,7 +31,9 @@ export function GET(): Response {
     '- [Data licence](/data/DATA_LICENSE.md): F1DB (CC BY 4.0); TracingInsights (MIT for 2023–2024, Apache-2.0 from 2025)',
     '- Static JSON under /data/: index.json, sessions/<id>/meta.json, sessions/<id>/tel/<DRIVER>-<LAP>.json, sessions/<id>/replay.json, history/*.json, history/seasons/<year>.json',
     '',
-    'Unofficial fan project, not affiliated with Formula 1 companies.',
+    '## Disclaimer',
+    '',
+    ...DISCLAIMER.flatMap((section) => [...section.paragraphs, '']),
     '',
   ]
   return new Response(lines.join('\n'), {
