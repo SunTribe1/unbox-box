@@ -34,7 +34,7 @@
     "@cspell/dict-en-gb": "^5.0.34",
     "@eslint/js": "^9.39.1",
     "cspell": "^10.3.4",
-    "eslint": "^9.39.5",
+    "eslint": "^10.11.0",
     "husky": "^9.1.7",
     "knip": "^6.38.0",
     "lint-staged": "^17.5.1",
