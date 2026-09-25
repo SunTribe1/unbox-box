@@ -86,6 +86,9 @@ export interface ArchiveInputs {
   nation: string
 }
 
+/** A change to the archive state; `undefined` clears a key (back to the index page). */
+export type ArchivePatch = { [K in keyof ArchiveInputs]?: ArchiveInputs[K] | undefined }
+
 export const HISTORY_TABS = ['head-to-head', 'drivers', 'teams'] as const
 export type HistoryTab = (typeof HISTORY_TABS)[number]
 
@@ -120,7 +123,7 @@ export interface UnboxBoxContext {
     setStrategy(update: Partial<StrategyInputs>): void
     setHistory(update: Partial<HistoryInputs>): void
     /** Race Archive, Record Book, Engines & Tyres and Nations selections. */
-    setArchive(update: Partial<ArchiveInputs>): void
+    setArchive(update: ArchivePatch): void
     /** Circuits view: a circuit's F1DB id, or null for the index. */
     setCircuit(circuit: string | null): void
   }
@@ -132,7 +135,7 @@ export interface ToolResult {
   /** Structured result for agents and tests. */
   data?: unknown
   /** What changed on screen, shown in the tool-call log. */
-  effect?: string
+  effect?: string | undefined
 }
 
 export interface ToolDefinition<S extends z.ZodType = z.ZodType> {

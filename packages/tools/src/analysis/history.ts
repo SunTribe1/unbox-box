@@ -51,9 +51,9 @@ export function historicDriver(data: HistoryData, i: number): HistoryDriver {
 }
 
 export interface Filters {
-  from?: number
-  to?: number
-  circuit?: number
+  from?: number | undefined
+  to?: number | undefined
+  circuit?: number | undefined
 }
 
 function rowsFor(data: HistoryData, filters: Filters = {}): number[] {

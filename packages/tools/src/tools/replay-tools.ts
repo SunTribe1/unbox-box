@@ -9,7 +9,7 @@ import { PLAYBACK_SPEEDS, defineTool, type UnboxBoxContext } from './types'
 export async function ensureRace(
   ctx: UnboxBoxContext,
   view: 'replay' | 'strategy' = 'replay',
-): Promise<{ sessionId: string; note?: string }> {
+): Promise<{ sessionId: string; note?: string | undefined }> {
   let meta = await ctx.getSession()
   let note: string | undefined
   if (!meta.replay) {

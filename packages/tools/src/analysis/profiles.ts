@@ -5,7 +5,7 @@ import { careerBySeason, type Season } from './history'
 /** Driver and team profiles, championship progressions and grid-to-flag gains, all derived
  *  from F1DB race results (see analysis/history.ts for the data layout). */
 
-const isClassified = (pos: number) => pos > 0
+export const isClassified = (pos: number) => pos > 0
 
 const plain = (s: string) =>
   stripAccents(s)
@@ -116,7 +116,7 @@ function stintsOf(data: HistoryData, rows: number[]): TeamStint[] {
 }
 
 /** Final position in each season's championship, from the last round's standings. */
-function finalPositions(
+export function finalPositions(
   data: HistoryData,
   standings: HistoryStandings['drivers' | 'constructors'],
   id: number,
@@ -227,128 +227,8 @@ function teammatesOf(data: HistoryData, driver: number, rows: number[]) {
     .map(([d, m]) => ({ driver: d, ...m }))
 }
 
-export interface TeamSeason {
-  year: number
-  races: number
-  wins: number
-  podiums: number
-  poles: number
-  /** Points its drivers scored in Grands Prix (sprints are in the official standings). */
-  points: number
-  drivers: number[]
-  champion: boolean
-  position: number | null
-}
-
-export interface TeamProfile {
-  /** Every name the team raced under, oldest first (Toleman, Benetton, Renault...). */
-  lineage: { constructor: number; name: string; from: number; to: number | null }[]
-  seasons: TeamSeason[]
-  drivers: { driver: number; from: number; to: number; starts: number; wins: number }[]
-  driverTitles: { year: number; driver: number }[]
-  /** Totals across every name in the lineage, counting each name only for its own years. */
-  combined: { races: number; wins: number; podiums: number; titles: number } | null
-}
-
-export function teamProfile(
-  data: HistoryData,
-  constructor: number,
-  standings?: HistoryStandings,
-): TeamProfile {
-  const r = data.results
-  const years = data.index.races.year
-  const seasons = new Map<number, TeamSeason & { raceSet: Set<number> }>()
-  const drivers = new Map<number, { from: number; to: number; starts: number; wins: number }>()
-  const positions = standings
-    ? finalPositions(data, standings.constructors, constructor)
-    : new Map<number, number>()
-  const titles = new Set(
-    data.index.constructorChampions.filter((c) => c.constructor === constructor).map((c) => c.year),
-  )
-  for (let row = 0; row < r.race.length; row++) {
-    if (r.constructor[row] !== constructor) continue
-    const year = years[r.race[row]!]!
-    const s =
-      seasons.get(year) ??
-      ({
-        year,
-        races: 0,
-        wins: 0,
-        podiums: 0,
-        poles: 0,
-        points: 0,
-        drivers: [],
-        champion: titles.has(year),
-        position: positions.get(year) ?? null,
-        raceSet: new Set<number>(),
-      } satisfies TeamSeason & { raceSet: Set<number> })
-    s.raceSet.add(r.race[row]!)
-    if (r.pos[row] === 1) s.wins++
-    if (r.pos[row]! >= 1 && r.pos[row]! <= 3) s.podiums++
-    s.poles += r.pole[row]!
-    s.points += r.points[row]!
-    const d = r.driver[row]!
-    if (!s.drivers.includes(d)) s.drivers.push(d)
-    seasons.set(year, s)
-    const entry = drivers.get(d) ?? { from: year, to: year, starts: 0, wins: 0 }
-    entry.to = Math.max(entry.to, year)
-    entry.starts++
-    if (r.pos[row] === 1) entry.wins++
-    drivers.set(d, entry)
-  }
-
-  // Driver titles won in this team's car: the champion scored most of their points here.
-  const driverTitles = data.index.champions.filter((c) => {
-    const s = seasons.get(c.year)
-    return s?.drivers.includes(c.driver) && mainTeam(data, c.driver, c.year) === constructor
-  })
-
-  const parent =
-    data.index.lineage.find((l) => l.constructor === constructor || l.parent === constructor)
-      ?.parent ?? constructor
-  const lineage = data.index.lineage
-    .filter((l) => l.parent === parent)
-    .map((l) => ({
-      constructor: l.constructor,
-      name: data.index.constructors[l.constructor]?.name ?? '',
-      from: l.from,
-      to: l.to,
-    }))
-    .sort((a, b) => a.from - b.from)
-
-  const inLineage = (c: number, year: number) =>
-    lineage.some((l) => l.constructor === c && year >= l.from && year <= (l.to ?? Infinity))
-  let combined: TeamProfile['combined'] = null
-  if (lineage.length > 1) {
-    const races = new Set<number>()
-    combined = { races: 0, wins: 0, podiums: 0, titles: 0 }
-    for (let row = 0; row < r.race.length; row++) {
-      if (!inLineage(r.constructor[row]!, years[r.race[row]!]!)) continue
-      races.add(r.race[row]!)
-      if (r.pos[row] === 1) combined.wins++
-      if (r.pos[row]! >= 1 && r.pos[row]! <= 3) combined.podiums++
-    }
-    combined.races = races.size
-    combined.titles = data.index.constructorChampions.filter((c) =>
-      inLineage(c.constructor, c.year),
-    ).length
-  }
-
-  return {
-    lineage,
-    combined,
-    seasons: [...seasons.values()]
-      .map(({ raceSet, ...s }) => ({ ...s, races: raceSet.size }))
-      .sort((a, b) => a.year - b.year),
-    drivers: [...drivers]
-      .sort(([, a], [, b]) => b.starts - a.starts)
-      .map(([driver, d]) => ({ driver, ...d })),
-    driverTitles,
-  }
-}
-
 /** The constructor a driver scored most points with in a season (their "car" that year). */
-function mainTeam(data: HistoryData, driver: number, year: number): number | null {
+export function mainTeam(data: HistoryData, driver: number, year: number): number | null {
   const r = data.results
   const points = new Map<number, number>()
   for (let row = 0; row < r.race.length; row++) {
@@ -356,82 +236,4 @@ function mainTeam(data: HistoryData, driver: number, year: number): number | nul
     points.set(r.constructor[row]!, (points.get(r.constructor[row]!) ?? 0) + r.points[row]! + 0.001)
   }
   return [...points].sort(([, a], [, b]) => b - a)[0]?.[0] ?? null
-}
-
-export interface Progression {
-  season: number
-  rounds: { race: number; round: number; name: string }[]
-  /** Final order. `points[i]` is the total after round i (null before a first appearance). */
-  rows: { id: number; name: string; position: number; points: (number | null)[] }[]
-}
-
-/** How a championship unfolded, round by round, from the official standings. */
-export function championshipProgression(
-  data: HistoryData,
-  standings: HistoryStandings,
-  season: number,
-  kind: 'drivers' | 'constructors',
-): Progression {
-  const races = data.index.races
-  const rounds = races.year
-    .map((year, race) => ({ year, race }))
-    .filter((x) => x.year === season)
-    .map(({ race }) => ({ race, round: races.round[race]!, name: races.name[race]! }))
-    .sort((a, b) => a.round - b.round)
-  const column = new Map(rounds.map((r, i) => [r.race, i]))
-  const table = standings[kind]
-  const rows = new Map<number, { points: (number | null)[]; position: number }>()
-  for (let i = 0; i < table.race.length; i++) {
-    const col = column.get(table.race[i]!)
-    if (col == null) continue
-    const id = table.id[i]!
-    const row = rows.get(id) ?? { points: rounds.map(() => null), position: 0 }
-    row.points[col] = table.points[i]!
-    if (col === rounds.length - 1 || row.position === 0) row.position = table.pos[i]!
-    rows.set(id, row)
-  }
-  const name = (id: number) =>
-    kind === 'drivers'
-      ? (data.index.drivers[id]?.name ?? '')
-      : (data.index.constructors[id]?.name ?? '')
-  return {
-    season,
-    rounds,
-    rows: [...rows]
-      .map(([id, row]) => ({ id, name: name(id), ...row }))
-      .sort((a, b) => (a.position || 99) - (b.position || 99)),
-  }
-}
-
-export interface GridGain {
-  driver: number
-  constructor: number
-  grid: number
-  pos: number
-  status: string
-  /** Places gained (positive) or lost; null when the driver was not classified. */
-  gained: number | null
-}
-
-/** Grid to flag for one race, biggest gains first. A 0 grid slot means a pit-lane start,
- *  counted from the back of the field. */
-export function gridToFlag(data: HistoryData, race: number): GridGain[] {
-  const r = data.results
-  const rows: number[] = []
-  for (let row = 0; row < r.race.length; row++) if (r.race[row] === race) rows.push(row)
-  const back = rows.length
-  return rows
-    .map((row) => {
-      const grid = r.grid[row]! || back
-      const pos = r.pos[row]!
-      return {
-        driver: r.driver[row]!,
-        constructor: r.constructor[row]!,
-        grid,
-        pos,
-        status: r.status[row]!,
-        gained: isClassified(pos) ? grid - pos : null,
-      }
-    })
-    .sort((a, b) => (b.gained ?? -99) - (a.gained ?? -99))
 }

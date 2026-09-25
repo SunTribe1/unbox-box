@@ -19,8 +19,8 @@ export interface RecordRow {
   subject: number
   value: number
   /** The race it happened at, for one-off records (youngest winner...). */
-  year?: number
-  round?: number
+  year?: number | undefined
+  round?: number | undefined
   /** A second driver: the runner-up in a winning margin. */
   other?: number
   /** Supporting figure, e.g. "31 wins from 94 starts". */

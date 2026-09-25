@@ -79,12 +79,12 @@ export function bestQualifying(row: SessionRow): number | undefined {
 }
 
 export interface WeekendHeadline {
-  winner?: SessionRow
-  pole?: SessionRow
-  fastestLap?: SessionRow
-  driverOfTheDay?: SessionRow
+  winner?: SessionRow | undefined
+  pole?: SessionRow | undefined
+  fastestLap?: SessionRow | undefined
+  driverOfTheDay?: SessionRow | undefined
   /** Fastest stop of the race (pit-lane time as F1DB records it). */
-  fastestStop?: SessionRow
+  fastestStop?: SessionRow | undefined
   finishers: number
   starters: number
 }

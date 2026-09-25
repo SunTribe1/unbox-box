@@ -1,12 +1,9 @@
 import '../zod-setup'
 import { z } from 'zod'
 import { resolveHistoricDriver } from '../analysis/history'
-import {
-  championshipProgression,
-  driverProfile,
-  resolveTeam,
-  teamProfile,
-} from '../analysis/profiles'
+import { championshipProgression } from '../analysis/championship'
+import { driverProfile, resolveTeam } from '../analysis/profiles'
+import { teamProfile } from '../analysis/team-profile'
 import { defineTool, type UnboxBoxContext } from './types'
 
 async function openHistory(ctx: UnboxBoxContext) {

@@ -1,5 +1,6 @@
 import type {
   ArchiveInputs,
+  ArchivePatch,
   DuelSelection,
   HistoryInputs,
   PlaybackSpeed,
@@ -76,7 +77,7 @@ interface AppState {
   setBusy(busy: boolean): void
   setStrategy(update: Partial<StrategyInputs>): void
   setHistory(update: Partial<HistoryInputs>): void
-  setArchive(update: Partial<ArchiveInputs>): void
+  setArchive(update: ArchivePatch): void
 }
 
 export const useApp = create<AppState>()(

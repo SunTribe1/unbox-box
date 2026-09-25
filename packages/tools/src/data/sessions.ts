@@ -209,9 +209,9 @@ export function findSession(
 }
 
 export interface SessionQuery {
-  season?: number
-  event?: string
-  session?: string
+  season?: number | undefined
+  event?: string | undefined
+  session?: string | undefined
 }
 
 /** Structured search, newest first. `event` accepts names, nicknames, circuits or countries. */
