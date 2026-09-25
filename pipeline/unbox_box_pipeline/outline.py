@@ -178,9 +178,13 @@ def rebuild_outlines(out_dir: Path) -> list[str]:
 SHAPE_POINTS = 150  # enough for a crisp card thumbnail, a few KB for the whole calendar
 
 
-def build_circuit_shapes(out_dir: Path) -> dict[str, Any]:
+def build_circuit_shapes(out_dir: Path, published: dict[str, Any] | None = None) -> dict[str, Any]:
     """Writes data/circuits.json: one small outline per circuit (from its most recent
-    session), with rotation and named corners, for the Circuits pages."""
+    session), with rotation and named corners, for the Circuits pages.
+
+    `published`: the live circuits.json. A CI sync starts with an empty folder and builds only
+    new sessions, so it starts from the published shapes and replaces only the circuits it
+    built; otherwise it would upload a file with just those circuits."""
     latest: dict[str, dict[str, Any]] = {}
     for meta_path in sorted(out_dir.glob("sessions/*/meta.json")):
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -189,7 +193,7 @@ def build_circuit_shapes(out_dir: Path) -> dict[str, Any]:
             continue
         if slug not in latest or (meta.get("date") or "") > (latest[slug].get("date") or ""):
             latest[slug] = meta
-    shapes = {}
+    shapes = dict(published or {})
     for slug, meta in sorted(latest.items()):
         x, y = meta["track"]["x"], meta["track"]["y"]
         step = max(1, math.ceil(len(x) / SHAPE_POINTS))
@@ -203,5 +207,6 @@ def build_circuit_shapes(out_dir: Path) -> dict[str, Any]:
                 for c in meta["circuit"].get("corners", [])
             ],
         }
+    shapes = dict(sorted(shapes.items()))
     dump(out_dir / "circuits.json", shapes)
     return shapes
