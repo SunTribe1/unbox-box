@@ -8,6 +8,8 @@ out/
 
 # Generated at build time (scripts/host-config.mjs); vercel.json, _headers and _redirects are committed
 apps/web/public/serve.json
+# Data fetched for the prerendered SEO pages (scripts/seo-data.mjs)
+apps/web/.seo-data/
 
 # Test and coverage output
 coverage/

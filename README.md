@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <strong>Formula 1 analysis you can ask in plain English, and an AI agent can drive.</strong><br>
+  <strong>F1 interactive data analysis that an AI agent can drive.</strong><br>
   Lap duels, race replays, strategy, and every Grand Prix since 1950. Free, open source, no account.
 </p>
 

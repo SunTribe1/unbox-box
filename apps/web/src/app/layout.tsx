@@ -9,24 +9,26 @@ import { BRAND_BACKGROUND } from '@/lib/brand'
 
 /** Absolute URLs for link previews and the sitemap; set NEXT_PUBLIC_SITE_URL when deploying. */
 
+const TITLE = 'Unbox Box · F1 Interactive Data Analysis'
+
 const DESCRIPTION =
-  'F1 analysis you can ask in plain English: lap duels, race replays, strategy and every Grand Prix since 1950. Unofficial fan project.'
+  'F1 interactive data analysis: telemetry lap comparisons, race replays, tyre strategy and every Grand Prix since 1950. Free. Unofficial fan project.'
 
 export const metadata: Metadata = {
   ...(SITE_URL && { metadataBase: new URL(SITE_URL) }),
-  title: 'Unbox Box',
+  title: TITLE,
   description: DESCRIPTION,
   openGraph: {
     type: 'website',
     siteName: 'Unbox Box',
-    title: 'Unbox Box',
+    title: TITLE,
     description: DESCRIPTION,
     locale: 'en_GB',
     images: [OG_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Unbox Box',
+    title: TITLE,
     description: DESCRIPTION,
     images: [OG_IMAGE.url],
   },
