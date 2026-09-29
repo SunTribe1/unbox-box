@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 /** The form reads its settings at import, so each test loads it fresh with its own env. */
 async function renderForm(env: Record<string, string> = {}) {
@@ -11,15 +11,20 @@ async function renderForm(env: Record<string, string> = {}) {
   render(<FeedbackForm />)
 }
 
+/** Pastes rather than types: jsdom re-renders the whole form (Radix and all) on every key,
+ *  about 60 ms each, so typing a sentence alone outran the 5 s test timeout. */
 async function fill() {
-  await userEvent.type(screen.getByLabelText('Title'), 'Replay stutters at 64x')
-  await userEvent.type(
-    screen.getByLabelText(/What happened/),
-    'Pressed play at 64x on Monza 2025 and the cars jump.',
-  )
+  const user = userEvent.setup()
+  await user.click(screen.getByLabelText('Title'))
+  await user.paste('Replay stutters at 64x')
+  await user.click(screen.getByLabelText(/What happened/))
+  await user.paste('Pressed play at 64x on Monza 2025 and the cars jump.')
 }
 
 describe('FeedbackForm', () => {
+  // Compile the form and its UI kit once, so the first test is not timed on a cold import.
+  beforeAll(() => import('@/features/help/feedback-form'), 30_000)
+
   afterEach(() => {
     vi.unstubAllEnvs()
     vi.unstubAllGlobals()

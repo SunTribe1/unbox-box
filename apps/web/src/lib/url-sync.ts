@@ -1,5 +1,6 @@
 import { buildRoute, parseRoute, routeParts, type RouteInput, type RouteState } from './routes'
 import { DEFAULT_TRACES, useApp, usePlayback } from './store'
+import { URL_CHANGE_EVENT } from './use-page-path'
 
 /** Keeps the address bar in step with the app (see routes.ts for the URL scheme). Switching
  *  view adds a history entry, so Back and Forward move between views; everything else
@@ -64,6 +65,7 @@ function write() {
   if (lastPlace && place !== lastPlace) window.history.pushState(null, '', next)
   else window.history.replaceState(null, '', next)
   lastPlace = place
+  window.dispatchEvent(new Event(URL_CHANGE_EVENT))
 }
 
 /** Back / Forward: bring the view (and History or Circuits selection) back from the URL. */

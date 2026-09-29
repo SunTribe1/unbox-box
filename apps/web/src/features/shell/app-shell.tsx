@@ -12,6 +12,7 @@ import { useBootstrap } from '@/lib/use-bootstrap'
 import { VIEW_META } from '@/lib/view-meta'
 import { useTeamColors } from '@/lib/use-team-colors'
 import { useMediaQuery } from '@/lib/use-media-query'
+import { type PageHeading, useOnPage } from '@/lib/use-page-path'
 import { AgentPanel } from '../agent/agent-panel'
 import { useWebMcp } from '../agent/webmcp-bridge'
 import { CommandPalette } from './command-palette'
@@ -123,17 +124,20 @@ function useDockPreference() {
   }, [])
 }
 
-function CurrentView() {
+function CurrentView({ heading }: { heading: string | null }) {
   const view = useApp((s) => s.view)
-  // Client-side view switches keep the tab title in step with the page's own title.
+  // Keep the tab title in step: the prerendered page's own title while the address is still
+  // on it, the view's once the user moves on.
   useEffect(() => {
-    document.title = `${VIEW_META[view].title} · Unbox Box`
-  }, [view])
+    document.title = `${heading ?? VIEW_META[view].title} · Unbox Box`
+  }, [view, heading])
   const View = VIEWS_BY_ID[view] ?? LapDuel
   return <View />
 }
 
-export function AppShell() {
+export function AppShell({ page }: { page?: PageHeading }) {
+  const onPage = useOnPage(page)
+  const heading = onPage && page ? page.heading : null
   useBootstrap()
   useViewShortcuts()
   useTeamColors()
@@ -154,11 +158,11 @@ export function AppShell() {
         <TopBar />
         <main id="main" className="@container min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto max-w-[2000px] px-3 py-4 md:px-4 md:py-5">
-            <h1 className="sr-only">{VIEW_TITLES[view]}</h1>
+            <h1 className="sr-only">{heading ?? VIEW_TITLES[view]}</h1>
             {/* Keyed CSS entrance: replays on every view switch, needs no JS to finish, so
                 content can never be stranded invisible (reduced motion disables it). */}
             <div key={view} className="animate-view-in">
-              <CurrentView />
+              <CurrentView heading={heading} />
             </div>
             <footer className="mt-8 border-t pt-4 pb-2 text-[11px] leading-relaxed text-faint-foreground">
               {DISCLAIMER_SHORT} All other names are trade marks of their respective owners, who do

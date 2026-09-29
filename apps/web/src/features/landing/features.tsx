@@ -24,7 +24,7 @@ const FEATURES: Feature[] = [
   {
     eyebrow: 'Lap Duel',
     title: 'Two laps. Every metre compared.',
-    body: 'Speed, throttle, brake, gear and RPM traced side by side, with the running gap and a track map that shows who is quicker through each mini-sector.',
+    body: 'F1 telemetry, lap against lap: speed, throttle, brake, gear and RPM traced side by side, with the running gap and a track map that shows who is quicker through each mini-sector.',
     points: [
       'Corner-by-corner time lost',
       'Aligned to official sector times',
@@ -54,7 +54,7 @@ const FEATURES: Feature[] = [
   {
     eyebrow: 'Strategy Lab',
     title: 'Test the call before the pit wall does.',
-    body: 'Stints, tyre degradation and pit stops for every driver, a pit-stop simulator that runs the race 500 times, and an undercut check.',
+    body: 'Tyre strategy analysis: stints, degradation and pit stops for every driver, a pit-stop simulator that runs the race 500 times, and an undercut check.',
     points: ['Degradation per compound', 'Pit-loss and undercut maths', 'Every race since 2023'],
     video: '/landing/strategy.webm',
     image: '/landing/strategy.jpg',

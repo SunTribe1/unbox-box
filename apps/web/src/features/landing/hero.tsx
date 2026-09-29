@@ -49,8 +49,9 @@ export function Hero({ toolCount }: { toolCount: number }) {
             animate="show"
             className="mt-6 text-lead max-w-xl text-white/70"
           >
-            Put two laps side by side, replay a whole race, test a pit strategy, or dig through
-            every Grand Prix since 1950. Ask in plain English, or let your AI agent drive.
+            Free F1 data analysis: put two laps of telemetry side by side, replay a whole race, test
+            a pit strategy, or dig through every Grand Prix since 1950. Ask in plain English, or let
+            your AI agent drive.
           </m.p>
           <m.div
             custom={3}

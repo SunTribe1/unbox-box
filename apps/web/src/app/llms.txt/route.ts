@@ -12,7 +12,7 @@ export function GET(): Response {
   const lines = [
     '# Unbox Box',
     '',
-    '> An unofficial Formula 1 analysis web app that AI agents can drive: lap duels, race',
+    '> An unofficial F1 interactive data analysis web app that AI agents can drive: lap duels, race',
     '> replays, strategy, and every Grand Prix weekend since 1950.',
     '',
     '## Pages',
