@@ -101,8 +101,9 @@ export function racePages({ history: h, results }: SeoSource): SeoPage[] {
         path: pathOf('races', [String(year), String(round)]),
         circuit,
       }),
+      // No sitemap date: <lastmod> is when the page last changed, not when the race ran, and
+      // search engines reject dates before 1970.
       'Race Archive',
-      r.date[i],
     )
   })
 }

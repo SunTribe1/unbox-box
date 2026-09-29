@@ -50,7 +50,7 @@ describe('SEO pages', () => {
     expect(monaco.heading).toBe('1988 Monaco Grand Prix results')
     expect(monaco.description).toContain('Won by Alain Prost (McLaren)')
     expect(monaco.description).toContain('pole: Ayrton Senna')
-    expect(monaco.date).toBe('1988-05-15')
+    expect(monaco.date).toBeUndefined()
     expect(monaco.jsonLd[0]).toMatchObject({ '@type': 'SportsEvent', startDate: '1988-05-15' })
   })
 
@@ -70,6 +70,10 @@ describe('SEO pages', () => {
       '@type': 'ProfilePage',
       mainEntity: { '@type': 'Person', name: 'Alain Prost' },
     })
+  })
+
+  it('only dates pages a sitemap can date (1970 onwards)', () => {
+    for (const p of pages) if (p.date) expect(p.date >= '1970-01-01', p.path).toBe(true)
   })
 
   it('ends every page with breadcrumbs back to the view and home', () => {
