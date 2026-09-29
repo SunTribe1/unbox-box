@@ -25,6 +25,7 @@
     "data",
     "apps/web/public/data",
     "apps/web/public/flags",
+    "apps/web/public/google*.html",
     "apps/web/public/THIRD_PARTY_NOTICES.txt",
     "pipeline/.venv",
     "pipeline/.cache",

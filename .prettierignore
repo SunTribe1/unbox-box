@@ -19,3 +19,4 @@ apps/web/public/_headers
 apps/web/vercel.json
 docs/superpowers
 docs/brand/icon-set.html
+apps/web/public/google*.html
