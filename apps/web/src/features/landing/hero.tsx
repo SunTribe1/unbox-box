@@ -25,10 +25,12 @@ export function Hero({ toolCount }: { toolCount: number }) {
     <section className="relative isolate flex min-h-svh items-center overflow-hidden bg-brand-ink text-white">
       <div className="absolute inset-0 -z-10">
         <HeroCanvas />
-        {/* Edge shading keeps the headline readable over the halftone track; grain for film. */}
+        {/* Edge shading keeps the headline readable over the halftone track; grain for film.
+            The dots fade out on their own (a mask on the canvas) and the bottom blends into the
+            page on an eased curve, so no layer ends in a line. */}
         <div className="absolute inset-0 bg-[radial-gradient(90%_75%_at_12%_55%,#0a0a0b_30%,transparent_72%)]" />
         <Grain />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(to_top,var(--background),transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-64 fade-to-background" />
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-5 pt-28 pb-[min(92vw,390px)] sm:px-8 lg:pb-24">

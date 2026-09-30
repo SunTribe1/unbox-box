@@ -85,7 +85,7 @@ export function AskSection() {
     <section
       id="ask"
       aria-labelledby="ask-title"
-      className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col justify-center bg-surface-1 py-24 sm:py-32"
+      className="flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col justify-center bg-[linear-gradient(to_bottom_in_oklab,var(--background),var(--surface-1)_22%,var(--surface-1)_78%,var(--background))] py-24 sm:py-32"
     >
       <m.div
         {...reveal}

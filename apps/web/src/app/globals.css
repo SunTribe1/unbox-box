@@ -501,15 +501,38 @@
   }
 }
 
-/* Along a page edge (fixed, so it stays while scrolling). */
+/* Along a page edge (fixed, so it stays while scrolling): faint and eased to nothing, with no
+   edge you can see. The stops follow a smooth curve; a straight ramp shows as a band. */
 @utility glow-side-left {
-  background: radial-gradient(100% 55% at 0% 50%, oklch(from var(--glow) l c h / 16%), transparent);
+  background: radial-gradient(
+    ellipse 100% 80% at 0% 50% in oklab,
+    oklch(from var(--glow) l c h / 9%),
+    oklch(from var(--glow) l c h / 6%) 25%,
+    oklch(from var(--glow) l c h / 3%) 50%,
+    oklch(from var(--glow) l c h / 1%) 75%,
+    transparent
+  );
 }
 
 @utility glow-side-right {
   background: radial-gradient(
-    100% 55% at 100% 50%,
-    oklch(from var(--glow) l c h / 16%),
+    ellipse 100% 80% at 100% 50% in oklab,
+    oklch(from var(--glow) l c h / 9%),
+    oklch(from var(--glow) l c h / 6%) 25%,
+    oklch(from var(--glow) l c h / 3%) 50%,
+    oklch(from var(--glow) l c h / 1%) 75%,
+    transparent
+  );
+}
+
+/* Blends the bottom of a section into the page, on an eased curve. */
+@utility fade-to-background {
+  background: linear-gradient(
+    to top in oklab,
+    var(--background),
+    color-mix(in oklab, var(--background) 72%, transparent) 30%,
+    color-mix(in oklab, var(--background) 35%, transparent) 60%,
+    color-mix(in oklab, var(--background) 10%, transparent) 85%,
     transparent
   );
 }

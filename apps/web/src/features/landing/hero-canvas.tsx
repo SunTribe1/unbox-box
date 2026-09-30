@@ -86,7 +86,13 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
     }
   }, [shape, reduce])
 
-  return <canvas ref={canvas} aria-hidden className="absolute inset-0 size-full" />
+  return (
+    <canvas
+      ref={canvas}
+      aria-hidden
+      className="absolute inset-0 size-full [mask-image:linear-gradient(to_bottom,black_55%,transparent_96%)]"
+    />
+  )
 }
 
 interface Fit {
