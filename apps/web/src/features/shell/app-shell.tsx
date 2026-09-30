@@ -26,7 +26,7 @@ import { DISCLAIMER_SHORT } from '@/lib/legal'
 // Each view is its own chunk: opening the app loads only the view on screen.
 function ViewSkeleton() {
   return (
-    <div className="grid gap-4" aria-busy aria-label="Loading view">
+    <div className="grid gap-4" role="status" aria-busy aria-label="Loading view">
       <Skeleton className="h-9 w-full max-w-xl" />
       <Skeleton className="h-[480px] rounded-xl" />
     </div>

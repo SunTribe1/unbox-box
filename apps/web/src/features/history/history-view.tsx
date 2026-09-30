@@ -32,7 +32,12 @@ export function HistoryView() {
   }
   if (!history.data || !pair || !targets) {
     return (
-      <div className="grid gap-4 @min-[1100px]:grid-cols-2" aria-busy aria-label="Loading history">
+      <div
+        className="grid gap-4 @min-[1100px]:grid-cols-2"
+        role="status"
+        aria-busy
+        aria-label="Loading history"
+      >
         <Skeleton className="h-[560px] rounded-xl" />
         <Skeleton className="h-[560px] rounded-xl" />
       </div>

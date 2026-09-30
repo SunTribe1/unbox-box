@@ -25,7 +25,7 @@ export function RacesView() {
   if (error) return <ErrorState title="Race archive unavailable" error={error} />
   if (!history.data || !season.data || !year) {
     return (
-      <div className="grid gap-4" aria-busy aria-label="Loading race archive">
+      <div className="grid gap-4" role="status" aria-busy aria-label="Loading race archive">
         <Skeleton className="h-24 rounded-xl" />
         <div className="grid gap-3 @min-[560px]:grid-cols-2 @min-[900px]:grid-cols-3">
           {Array.from({ length: 6 }, (_, i) => (
