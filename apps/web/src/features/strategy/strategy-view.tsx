@@ -73,7 +73,12 @@ export function StrategyView() {
   }
   if (!meta.data || !replay.data) {
     return (
-      <div className="grid gap-4 @min-[1100px]:grid-cols-2" aria-busy aria-label="Loading strategy">
+      <div
+        className="grid gap-4 @min-[1100px]:grid-cols-2"
+        role="status"
+        aria-busy
+        aria-label="Loading strategy"
+      >
         {Array.from({ length: 4 }, (_, i) => (
           <Skeleton key={i} className="h-[320px] rounded-xl" />
         ))}

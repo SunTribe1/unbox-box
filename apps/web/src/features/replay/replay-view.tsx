@@ -60,7 +60,7 @@ export function ReplayView() {
   }
   if (!meta.data || !replay.data) {
     return (
-      <div className="grid gap-4" aria-busy aria-label="Loading race replay">
+      <div className="grid gap-4" role="status" aria-busy aria-label="Loading race replay">
         <Skeleton className="h-9 w-full max-w-xl" />
         <div className="grid gap-4 @min-[900px]:grid-cols-[minmax(0,1fr)_300px]">
           <Skeleton className="h-[520px] rounded-xl" />

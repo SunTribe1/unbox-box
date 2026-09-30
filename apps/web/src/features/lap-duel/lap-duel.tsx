@@ -14,7 +14,7 @@ import { useDuel, useSessionMeta } from './use-duel'
 
 function LoadingState() {
   return (
-    <div className="grid gap-4" aria-busy aria-label="Loading lap data">
+    <div className="grid gap-4" role="status" aria-busy aria-label="Loading lap data">
       <div className="grid grid-cols-2 gap-3 @min-[760px]:grid-cols-4">
         {Array.from({ length: 4 }, (_, i) => (
           <Skeleton key={i} className="h-[118px] rounded-xl" />

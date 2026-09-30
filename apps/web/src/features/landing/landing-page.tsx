@@ -33,11 +33,11 @@ export function LandingPage({ tools }: { tools: ToolSummary[] }) {
       {/* Red light along both edges, fixed so it stays with you while you scroll. */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-y-0 left-0 z-40 w-10 glow-side-left sm:w-24 lg:w-40"
+        className="pointer-events-none fixed inset-y-0 left-0 z-40 w-16 glow-side-left sm:w-40 lg:w-[min(26vw,420px)]"
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-y-0 right-0 z-40 w-10 glow-side-right sm:w-24 lg:w-40"
+        className="pointer-events-none fixed inset-y-0 right-0 z-40 w-16 glow-side-right sm:w-40 lg:w-[min(26vw,420px)]"
       />
       <LandingNav />
       <main id="main">
