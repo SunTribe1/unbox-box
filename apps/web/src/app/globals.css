@@ -472,32 +472,23 @@
 
 /* Under a bar: a red hairline and soft light spilling downward. */
 @utility glow-rim {
-  &::before,
-  &::after {
+  /* A soft wash of light under the bar: no hairline, faded at both ends, so nothing reads as a
+     line. */
+  &::before {
     content: '';
     position: absolute;
     inset-inline: 0;
     top: 100%;
+    height: 4rem;
     pointer-events: none;
-  }
-
-  &::after {
-    height: 1px;
     background: linear-gradient(
-      90deg,
-      transparent,
-      oklch(from var(--glow) l c h / 70%),
+      to bottom in oklab,
+      oklch(from var(--glow) l c h / 9%),
+      oklch(from var(--glow) l c h / 4%) 35%,
+      oklch(from var(--glow) l c h / 1%) 70%,
       transparent
     );
-  }
-
-  &::before {
-    height: 5rem;
-    background: radial-gradient(
-      45% 100% at 50% 0%,
-      oklch(from var(--glow) l c h / 18%),
-      transparent
-    );
+    mask-image: linear-gradient(to right, transparent, black 30%, black 70%, transparent);
   }
 }
 

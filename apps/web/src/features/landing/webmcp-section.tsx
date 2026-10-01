@@ -71,7 +71,11 @@ export function WebMcpSection({ tools }: { tools: ToolSummary[] }) {
           </p>
         </m.div>
 
-        <m.ol {...reveal} className="grid gap-3 md:grid-cols-4" aria-label="How a request flows">
+        <m.ol
+          {...reveal}
+          className="grid gap-3 md:grid-cols-4 md:gap-8"
+          aria-label="How a request flows"
+        >
           {FLOW.map(([step, detail], i) => (
             <li
               key={step}
@@ -84,7 +88,7 @@ export function WebMcpSection({ tools }: { tools: ToolSummary[] }) {
               </p>
               {i < FLOW.length - 1 && (
                 <ArrowRightIcon
-                  className="absolute top-1/2 -right-3 z-10 hidden size-4 -translate-y-1/2 text-signal-ink md:block"
+                  className="absolute top-1/2 -right-6 hidden size-4 -translate-y-1/2 text-signal-ink md:block"
                   aria-hidden
                 />
               )}

@@ -45,7 +45,7 @@ export function AppWindow({ title, children }: { title: string; children: React.
   return (
     <div className="relative">
       <Crosshairs />
-      <div className="glow-hover overflow-hidden rounded-xl border border-white/10 bg-[#0e0f12]">
+      <div className="glow-hover overflow-hidden rounded-none border border-white/10 bg-[#0e0f12]">
         <div className="flex items-center gap-3 border-b border-white/[0.08] px-4 py-2.5">
           <span className="flex gap-1.5" aria-hidden>
             {[0, 1, 2].map((i) => (
