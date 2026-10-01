@@ -90,7 +90,7 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
     <canvas
       ref={canvas}
       aria-hidden
-      className="absolute inset-0 size-full [mask-image:linear-gradient(to_bottom,black_55%,transparent_96%)]"
+      className="absolute inset-0 size-full [mask-image:linear-gradient(to_bottom,black_70%,transparent)]"
     />
   )
 }

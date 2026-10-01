@@ -501,28 +501,32 @@
   }
 }
 
-/* Along a page edge (fixed, so it stays while scrolling): faint and eased to nothing, with no
-   edge you can see. The stops follow a smooth curve; a straight ramp shows as a band. */
+/* Along a page edge (fixed, so it stays while scrolling): barely there. A straight falloff from
+   the edge, faded out top and bottom, with no ellipse whose contour could show as an arc. Light
+   this faint has only a handful of colour steps, so the element also carries film grain
+   (landing-page.tsx) to dither them into a smooth wash. */
 @utility glow-side-left {
-  background: radial-gradient(
-    ellipse 100% 80% at 0% 50% in oklab,
-    oklch(from var(--glow) l c h / 9%),
-    oklch(from var(--glow) l c h / 6%) 25%,
-    oklch(from var(--glow) l c h / 3%) 50%,
-    oklch(from var(--glow) l c h / 1%) 75%,
+  background: linear-gradient(
+    to right in oklab,
+    oklch(from var(--glow) l c h / 7%),
+    oklch(from var(--glow) l c h / 4.5%) 20%,
+    oklch(from var(--glow) l c h / 2%) 45%,
+    oklch(from var(--glow) l c h / 0.6%) 70%,
     transparent
   );
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
 }
 
 @utility glow-side-right {
-  background: radial-gradient(
-    ellipse 100% 80% at 100% 50% in oklab,
-    oklch(from var(--glow) l c h / 9%),
-    oklch(from var(--glow) l c h / 6%) 25%,
-    oklch(from var(--glow) l c h / 3%) 50%,
-    oklch(from var(--glow) l c h / 1%) 75%,
+  background: linear-gradient(
+    to left in oklab,
+    oklch(from var(--glow) l c h / 7%),
+    oklch(from var(--glow) l c h / 4.5%) 20%,
+    oklch(from var(--glow) l c h / 2%) 45%,
+    oklch(from var(--glow) l c h / 0.6%) 70%,
     transparent
   );
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
 }
 
 /* Blends the bottom of a section into the page, on an eased curve. */
