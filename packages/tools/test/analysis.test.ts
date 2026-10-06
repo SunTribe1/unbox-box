@@ -57,6 +57,12 @@ describe('lap analysis', () => {
     expect(sections.at(-1)!.end).toBe(meta.telemetry.length)
   })
 
+  it('has no sections when upstream published no corners', () => {
+    const bare = { ...meta, circuit: { ...meta.circuit, corners: [] } }
+    expect(trackSections(bare)).toEqual([])
+    expect(compareSections(bare, ver, nor, lapTimes)).toEqual([])
+  })
+
   it('section deltas also add up to the gap', () => {
     const sum = compareSections(meta, ver, nor, lapTimes).reduce((acc, s) => acc + s.delta, 0)
     expect(sum).toBeCloseTo(0.077, 3)

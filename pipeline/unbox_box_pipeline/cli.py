@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
+from typing import Any
 
 from .build import build_session
 from .circuits import f1db_driver_directory, load_f1db_races
@@ -99,11 +102,28 @@ def main() -> None:
             with_history=not args.no_history,
             published_index=args.published_index,
         )
-        print(f"Built {len(report['built'])}, failed {len(report['failed'])}")
+        summary = sync_summary(report)
+        print(summary)
+        if step_summary := os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(step_summary, "a") as handle:
+                handle.write(summary + "\n")
         if args.publish:
-            _publish(args.out, args.publish)
+            _publish(args.out, args.publish)  # good sessions ship even when others failed
+        sys.exit(sync_exit_code(report))
     elif args.command == "publish":
         _publish(args.out, args.repo)
+
+
+def sync_summary(report: dict[str, Any]) -> str:
+    lines = [f"Built {len(report['built'])}, failed {len(report['failed'])}"]
+    lines += [f"- FAILED {f['session']}: {f['error']}" for f in report["failed"]]
+    return "\n".join(lines)
+
+
+def sync_exit_code(report: dict[str, Any]) -> int:
+    """Non-zero when any session failed, so the scheduled run goes red and GitHub emails
+    the owner instead of a session silently going missing on every run."""
+    return 1 if report["failed"] else 0
 
 
 def _publish(out: Path, repo: str) -> None:
