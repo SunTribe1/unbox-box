@@ -8,6 +8,10 @@ name: Sync session data
 # Tuesday to Thursday for late or corrected uploads and the post-race F1DB update. No
 # calendar is hard-coded: each run builds only what's new, so a quiet run takes a minute.
 #
+# Sessions that build are always published, but the run fails while any session fails, so
+# GitHub emails the owner and the run summary lists what is missing. Without that, a
+# missing upstream file once hid the 2026 Spanish GP behind green runs for three weeks.
+#
 # Setup (once): add repository secret HF_TOKEN (a Hugging Face write token) and repository
 # variable HF_DATASET (e.g. your-name/unbox-box-data).
 

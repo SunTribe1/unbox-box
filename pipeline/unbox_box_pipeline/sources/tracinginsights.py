@@ -69,6 +69,18 @@ def _folder(season: int, event: str, session: str) -> str | None:
     return None
 
 
+def parse_corners(raw: dict[str, Any] | None) -> tuple[list[Corner], float]:
+    """Corners and map rotation. Upstream sometimes omits corners.json for a whole event
+    (2026 Spanish and Bahrain GPs); the session still builds, just without corner markers."""
+    if raw is None:
+        return [], 0.0
+    corners = [
+        Corner(number=int(n), distance=float(d), x=float(x), y=float(y))
+        for n, d, x, y in zip(raw["CornerNumber"], raw["Distance"], raw["X"], raw["Y"], strict=True)
+    ]
+    return corners, float(raw.get("Rotation", 0.0))
+
+
 # code -> (car number, first name, last name); fills gaps in upstream drivers.json.
 DriverDirectory = dict[str, tuple[str, str, str]]
 
@@ -157,17 +169,12 @@ class TracingInsightsSource:
                 if (t := _num(raw["wTT"][i])) is not None:
                     track.append(t)
 
-        corners_raw = self._file(season, event, session, "corners.json")
-        corners = [
-            Corner(number=int(n), distance=float(d), x=float(x), y=float(y))
-            for n, d, x, y in zip(
-                corners_raw["CornerNumber"],
-                corners_raw["Distance"],
-                corners_raw["X"],
-                corners_raw["Y"],
-                strict=True,
-            )
-        ]
+        try:
+            corners_raw = self._file(season, event, session, "corners.json")
+        except FileNotFoundError:
+            print(f"  {season} {event} {session}: no corners.json, building without corners")
+            corners_raw = None
+        corners, rotation = parse_corners(corners_raw)
 
         rcm = self._file(season, event, session, "rcm.json")
         date = rcm["time"][0][:10] if rcm.get("time") else None
@@ -190,7 +197,7 @@ class TracingInsightsSource:
             drivers=drivers,
             laps=laps,
             corners=corners,
-            rotation=float(corners_raw.get("Rotation", 0.0)),
+            rotation=rotation,
             air_temp=round(statistics.fmean(air), 1) if air else None,
             track_temp=round(statistics.fmean(track), 1) if track else None,
             source_name="TracingInsights",
