@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { JsonLdScript } from '@/components/json-ld'
+import { SeoSummary } from '@/components/seo-summary'
 import { AppShell } from '@/features/shell/app-shell'
 import { VIEW_SLUG } from '@/lib/routes'
 import { loadSeoSource } from '@/lib/seo/load-source'
@@ -37,7 +38,10 @@ export default async function DeepPage({ params }: { params: Promise<Params> }) 
   return (
     <>
       {page && <JsonLdScript data={page.jsonLd} />}
-      <AppShell page={page && { path: page.path, heading: page.heading }} />
+      <AppShell
+        page={page && { path: page.path, heading: page.heading }}
+        summary={page && <SeoSummary content={page.content} />}
+      />
     </>
   )
 }
