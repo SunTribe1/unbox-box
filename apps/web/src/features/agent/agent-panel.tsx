@@ -44,6 +44,7 @@ import {
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useApp, type CallEntry, type Message } from '@/lib/store'
+import { useHydrated } from '@/lib/use-hydrated'
 import { enter, riseIn, stagger } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 import { useSessionMeta } from '../lap-duel/use-duel'
@@ -201,6 +202,9 @@ export function AgentPanel({
   const ready = useApp((s) => s.duel !== null)
   const view = useApp((s) => s.view)
   const meta = useSessionMeta().data
+  // Examples name this session's drivers and corners, so the prerendered HTML (which can't
+  // know the session yet) has none, rather than another race's.
+  const examples = useHydrated() ? suggestionsFor(view, meta) : []
   const [draft, setDraft] = useState('')
   const inputId = useId()
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -326,7 +330,7 @@ export function AgentPanel({
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent className="max-w-none items-start">
-              <Suggestions items={suggestionsFor(view, meta)} onPick={submit} />
+              <Suggestions items={examples} onPick={submit} />
             </EmptyContent>
           </Empty>
         </div>
@@ -370,7 +374,7 @@ export function AgentPanel({
                 submit(draft)
               }
             }}
-            placeholder={suggestionsFor(view, meta)[view === 'replay' ? 1 : 0] ?? 'Ask anything'}
+            placeholder={examples[view === 'replay' ? 1 : 0] ?? 'Ask anything'}
             className="max-h-32 min-h-11 py-3 text-sm placeholder:text-faint-foreground"
           />
           <InputGroupAddon align="inline-end" className="self-end pb-1.5">
