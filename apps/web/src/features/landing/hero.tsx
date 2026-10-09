@@ -26,7 +26,7 @@ export function Hero({ toolCount }: { toolCount: number }) {
       <div className="absolute inset-0 -z-10">
         <HeroCanvas />
         {/* Edge shading keeps the headline readable over the halftone track; grain for film.
-            The dots fade out on their own (a mask on the canvas) and the bottom blends into the
+            The dots fade out on their own (painted into the canvas) and the bottom blends into the
             page on an eased curve, so no layer ends in a line. */}
         <div className="absolute inset-0 bg-[radial-gradient(90%_75%_at_12%_55%,#0a0a0b_30%,transparent_72%)]" />
         <Grain />

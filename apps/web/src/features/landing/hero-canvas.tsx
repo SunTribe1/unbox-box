@@ -9,18 +9,24 @@ type Point = [number, number]
 
 /** The hero's backdrop: a real circuit outline from the data, drawn as a halftone field (dots
  *  swell near the track) with a dashed orbit, and a car of red light lapping it. The car slows
- *  into corners, because its speed follows the track's curvature. The static layer is drawn
- *  once per resize; each frame only adds the car. */
+ *  into corners, because its speed follows the track's curvature.
+ *
+ *  Two canvases keep scrolling smooth: the static field is drawn once per resize, and each
+ *  frame only clears and redraws the car on its own layer. No canvas blur filters per frame and
+ *  no CSS mask (both make the browser repaint the full hero while you scroll); the bottom fade
+ *  is painted into the pixels instead. */
 export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
-  const canvas = useRef<HTMLCanvasElement>(null)
+  const field = useRef<HTMLCanvasElement>(null)
+  const car = useRef<HTMLCanvasElement>(null)
   const reduce = useReducedMotion()
   const shapes = useQuery(circuitShapesQuery())
   const shape = shapes.data?.[circuit]
 
   useEffect(() => {
-    const el = canvas.current
-    const ctx = el?.getContext('2d')
-    if (!el || !ctx || !shape || shape.x.length < 3) return
+    const [fieldEl, carEl] = [field.current, car.current]
+    const fieldCtx = fieldEl?.getContext('2d')
+    const ctx = carEl?.getContext('2d')
+    if (!fieldEl || !carEl || !fieldCtx || !ctx || !shape || shape.x.length < 3) return
     const path = rotate(
       shape.x.map((x, i): Point => [x, shape.y[i] ?? 0]),
       shape.rotation,
@@ -30,36 +36,32 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
     let visible = true
     let t = 0
     let last = performance.now()
-
-    const layer = document.createElement('canvas')
     let fit: Fit = { scale: 1, dx: 0, dy: 0 }
+    let [w, h] = [0, 0]
+
     const size = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      const [w, h] = [el.clientWidth, el.clientHeight]
-      for (const c of [el, layer]) {
+      ;[w, h] = [fieldEl.clientWidth, fieldEl.clientHeight]
+      for (const c of [fieldEl, carEl]) {
         c.width = w * dpr
         c.height = h * dpr
       }
+      fieldCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       fit = fitTo(path, w, h)
-      const layerCtx = layer.getContext('2d')
-      if (layerCtx) {
-        layerCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
-        drawField(layerCtx, path, fit, w, h)
-      }
+      drawField(fieldCtx, path, fit, w, h)
+      fadeBottom(fieldCtx, w, h)
     }
     size()
     const observer = new ResizeObserver(size)
-    observer.observe(el)
+    observer.observe(fieldEl)
     const seen = new IntersectionObserver(([entry]) => {
       visible = !!entry?.isIntersecting
     })
-    seen.observe(el)
+    seen.observe(fieldEl)
 
     const draw = (now: number) => {
-      const [w, h] = [el.clientWidth, el.clientHeight]
       ctx.clearRect(0, 0, w, h)
-      ctx.drawImage(layer, 0, 0, w, h)
       if (reduce) {
         drawTrail(ctx, path, fit, path.length * 0.35, Math.round(path.length * 0.28))
       } else {
@@ -69,6 +71,7 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
         t = (t + dt * (path.length / 9) * (pace[wrap(t, path.length)] ?? 1)) % path.length
         drawTrail(ctx, path, fit, t, Math.round(path.length * 0.28))
       }
+      fadeBottom(ctx, w, h)
       last = now
     }
 
@@ -87,12 +90,23 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
   }, [shape, reduce])
 
   return (
-    <canvas
-      ref={canvas}
-      aria-hidden
-      className="absolute inset-0 size-full [mask-image:linear-gradient(to_bottom,black_70%,transparent)]"
-    />
+    <>
+      <canvas ref={field} aria-hidden className="absolute inset-0 size-full" />
+      <canvas ref={car} aria-hidden className="absolute inset-0 size-full" />
+    </>
   )
+}
+
+/** Fades the lowest 30% of a layer to transparent, as the old CSS mask did. */
+function fadeBottom(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  const fade = ctx.createLinearGradient(0, h * 0.7, 0, h)
+  fade.addColorStop(0, 'rgba(0,0,0,1)')
+  fade.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.save()
+  ctx.globalCompositeOperation = 'destination-in'
+  ctx.fillStyle = fade
+  ctx.fillRect(0, 0, w, h)
+  ctx.restore()
 }
 
 interface Fit {
@@ -222,7 +236,8 @@ function distanceTo(poly: Point[], x: number, y: number): number {
   return best
 }
 
-/** The car and its light trail: `head` is a fractional index into the path. */
+/** The car and its light trail: `head` is a fractional index into the path. The glow is a wide,
+ *  faint stroke under a thin bright one (cheap); only the car itself gets a real blur. */
 function drawTrail(
   ctx: CanvasRenderingContext2D,
   path: Point[],
@@ -232,22 +247,23 @@ function drawTrail(
 ) {
   const n = path.length
   ctx.lineCap = 'round'
-  for (let k = length; k > 0; k--) {
-    const a = path[wrap(head - k, n)]!
-    const b = path[wrap(head - k + 1, n)]!
-    const fade = 1 - k / length
-    const [x1, y1] = at(a, f)
-    const [x2, y2] = at(b, f)
-    ctx.beginPath()
-    ctx.moveTo(x1, y1)
-    ctx.lineTo(x2, y2)
-    ctx.strokeStyle = `rgba(230,36,36,${0.9 * fade * fade})`
-    ctx.lineWidth = 1 + 3 * fade
-    ctx.shadowColor = 'rgba(230,36,36,0.8)'
-    ctx.shadowBlur = 16 * fade
-    ctx.stroke()
+  for (const glow of [true, false]) {
+    for (let k = length; k > 0; k--) {
+      const [x1, y1] = at(path[wrap(head - k, n)]!, f)
+      const [x2, y2] = at(path[wrap(head - k + 1, n)]!, f)
+      const fade = 1 - k / length
+      ctx.beginPath()
+      ctx.moveTo(x1, y1)
+      ctx.lineTo(x2, y2)
+      ctx.strokeStyle = glow
+        ? `rgba(230,36,36,${0.16 * fade * fade})`
+        : `rgba(230,36,36,${0.9 * fade * fade})`
+      ctx.lineWidth = glow ? 4 + 10 * fade : 1 + 3 * fade
+      ctx.stroke()
+    }
   }
   const [x, y] = at(path[wrap(head, n)]!, f)
+  ctx.shadowColor = 'rgba(230,36,36,0.8)'
   ctx.shadowBlur = 24
   ctx.fillStyle = '#ffd7d4'
   ctx.beginPath()

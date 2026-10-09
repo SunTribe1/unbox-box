@@ -486,47 +486,46 @@
     background: linear-gradient(
       90deg,
       transparent,
-      oklch(from var(--glow) l c h / 70%),
+      oklch(from var(--glow) l c h / 35%),
       transparent
     );
   }
 
   &::before {
-    height: 5rem;
+    height: 3rem;
     background: radial-gradient(
       45% 100% at 50% 0%,
-      oklch(from var(--glow) l c h / 18%),
+      oklch(from var(--glow) l c h / 7%),
       transparent
     );
   }
 }
 
 /* Along a page edge (fixed, so it stays while scrolling): barely there. A straight falloff from
-   the edge, faded out top and bottom, with no ellipse whose contour could show as an arc. Light
+   the edge running the full height of the screen, with no ellipse whose contour could show as an
+   arc and no vertical mask (a masked fixed layer is composited again on every scroll frame). Light
    this faint has only a handful of colour steps, so the element also carries film grain
    (landing-page.tsx) to dither them into a smooth wash. */
 @utility glow-side-left {
   background: linear-gradient(
     to right in oklab,
-    oklch(from var(--glow) l c h / 7%),
-    oklch(from var(--glow) l c h / 4.5%) 20%,
-    oklch(from var(--glow) l c h / 2%) 45%,
-    oklch(from var(--glow) l c h / 0.6%) 70%,
+    oklch(from var(--glow) l c h / 4%),
+    oklch(from var(--glow) l c h / 2.5%) 20%,
+    oklch(from var(--glow) l c h / 1.2%) 45%,
+    oklch(from var(--glow) l c h / 0.4%) 70%,
     transparent
   );
-  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
 }
 
 @utility glow-side-right {
   background: linear-gradient(
     to left in oklab,
-    oklch(from var(--glow) l c h / 7%),
-    oklch(from var(--glow) l c h / 4.5%) 20%,
-    oklch(from var(--glow) l c h / 2%) 45%,
-    oklch(from var(--glow) l c h / 0.6%) 70%,
+    oklch(from var(--glow) l c h / 4%),
+    oklch(from var(--glow) l c h / 2.5%) 20%,
+    oklch(from var(--glow) l c h / 1.2%) 45%,
+    oklch(from var(--glow) l c h / 0.4%) 70%,
     transparent
   );
-  mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
 }
 
 /* Blends the bottom of a section into the page, on an eased curve. */
@@ -545,7 +544,7 @@
 @utility glow-floor {
   background: radial-gradient(
     60% 60% at 50% 100%,
-    oklch(from var(--glow) l c h / 35%),
+    oklch(from var(--glow) l c h / 20%),
     transparent 70%
   );
 }
