@@ -5,7 +5,7 @@ import { ArrowRightIcon } from 'lucide-react'
 import { m, type Variants } from 'motion/react'
 import { Button } from '@/components/ui/button'
 import { indexQuery } from '@/lib/data'
-import { Brackets, Grain } from './decor'
+import { Brackets } from './decor'
 import { HeroCanvas } from './hero-canvas'
 import { EASE_OUT } from '@/lib/motion'
 import { useEnterApp } from './use-enter-app'
@@ -22,14 +22,13 @@ const rise: Variants = {
 export function Hero({ toolCount }: { toolCount: number }) {
   const enter = useEnterApp()
   return (
-    <section className="relative isolate flex min-h-svh items-center overflow-hidden bg-brand-ink text-white">
+    <section className="relative isolate flex min-h-svh items-center overflow-hidden bg-background text-white">
       <div className="absolute inset-0 -z-10">
         <HeroCanvas />
-        {/* Edge shading keeps the headline readable over the halftone track; grain for film.
-            The dots fade out on their own (painted into the canvas) and the bottom blends into the
-            page on an eased curve, so no layer ends in a line. */}
-        <div className="absolute inset-0 bg-[radial-gradient(90%_75%_at_12%_55%,#0a0a0b_30%,transparent_72%)]" />
-        <Grain />
+        {/* Edge shading keeps the headline readable over the halftone track. The hero shares the
+            page background and carries no grain (an overlay blend lifts the black into a lighter
+            slab), and the dots fade out inside the canvas, so no layer ends in a line. */}
+        <div className="absolute inset-0 bg-[radial-gradient(90%_75%_at_12%_55%,var(--background)_30%,transparent_72%)]" />
         <div className="absolute inset-x-0 bottom-0 h-64 fade-to-background" />
       </div>
 
