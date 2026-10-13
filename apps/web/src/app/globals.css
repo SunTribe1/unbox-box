@@ -578,6 +578,42 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Prerendered page summary (seo-summary.tsx). Styled here rather than per element: the same
+ * tables repeat hundreds of cells deep on ~1,100 pages, so per-cell classes dominated page size. */
+.seo-summary {
+  & table {
+    @apply w-full text-xs;
+  }
+
+  & tr {
+    @apply border-b transition-colors;
+  }
+
+  & tbody tr:hover {
+    @apply bg-muted/50;
+  }
+
+  & tbody tr:last-child {
+    @apply border-0;
+  }
+
+  & th {
+    @apply h-8 px-2 text-left align-middle text-label whitespace-nowrap text-faint-foreground;
+  }
+
+  & td {
+    @apply px-2 py-1.5 align-middle whitespace-nowrap;
+  }
+
+  & a {
+    @apply underline decoration-border underline-offset-2 hover:decoration-current;
+  }
+
+  & nav a {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+}
+
 /* ─── 8. Third-party overrides ──────────────────────────────────────────────────────────────── */
 
 /* uPlot: let tokens drive its chrome. */
