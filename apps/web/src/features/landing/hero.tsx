@@ -27,9 +27,9 @@ export function Hero({ toolCount }: { toolCount: number }) {
         <HeroCanvas />
         {/* Edge shading keeps the headline readable over the halftone track. The hero shares the
             page background and carries no grain (an overlay blend lifts the black into a lighter
-            slab), and the dots fade out inside the canvas, so no layer ends in a line. */}
+            slab). The track fades out inside the canvas; no CSS fade sits over it, because a
+            gradient layer over the canvas showed as a hard line about 3/4 down the screen. */}
         <div className="absolute inset-0 bg-[radial-gradient(90%_75%_at_12%_55%,var(--background)_30%,transparent_72%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-64 fade-to-background" />
       </div>
 
       <div className="mx-auto w-full max-w-6xl px-5 pt-28 pb-[min(92vw,390px)] sm:px-8 lg:pb-24">
