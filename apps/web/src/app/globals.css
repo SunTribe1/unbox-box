@@ -528,18 +528,6 @@
   );
 }
 
-/* Blends the bottom of a section into the page, on an eased curve. */
-@utility fade-to-background {
-  background: linear-gradient(
-    to top in oklab,
-    var(--background),
-    color-mix(in oklab, var(--background) 72%, transparent) 30%,
-    color-mix(in oklab, var(--background) 35%, transparent) 60%,
-    color-mix(in oklab, var(--background) 10%, transparent) 85%,
-    transparent
-  );
-}
-
 /* A floor of light under a closing section. */
 @utility glow-floor {
   background: radial-gradient(
