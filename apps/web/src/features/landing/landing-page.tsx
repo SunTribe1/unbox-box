@@ -26,21 +26,22 @@ export function LandingPage({ tools }: { tools: ToolSummary[] }) {
   return (
     <div className="dark relative min-h-svh overflow-x-clip bg-background text-foreground">
       {/* The layout grid, drawn faintly: guide lines at the content edges. Fixed to the screen
-          and faded at the top and bottom, so they never end in a hard edge while scrolling. */}
+          from under the nav to the bottom edge, so they frame the whole viewport. Fixed layers
+          get their own compositor layer (will-change) so scrolling never repaints them. */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-y-0 left-1/2 z-10 hidden w-full max-w-6xl -translate-x-1/2 border-x border-white/[0.05] [mask-image:linear-gradient(to_bottom,transparent,black_30%,black_70%,transparent)] lg:block"
+        className="pointer-events-none fixed top-16 bottom-0 left-1/2 z-10 hidden w-full max-w-6xl -translate-x-1/2 border-x border-white/[0.04] will-change-transform lg:block"
       />
       {/* Red light along both edges, fixed so it stays with you while you scroll. */}
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-y-0 left-0 z-40 w-16 glow-side-left sm:w-40 lg:w-[min(26vw,420px)]"
+        className="pointer-events-none fixed top-16 bottom-0 left-0 isolate z-40 w-16 will-change-transform glow-side-left sm:w-40 lg:w-[min(26vw,420px)]"
       >
         <Grain className="[mask-image:linear-gradient(to_right,black,transparent)]" />
       </div>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-y-0 right-0 z-40 w-16 glow-side-right sm:w-40 lg:w-[min(26vw,420px)]"
+        className="pointer-events-none fixed top-16 right-0 bottom-0 isolate z-40 w-16 will-change-transform glow-side-right sm:w-40 lg:w-[min(26vw,420px)]"
       >
         <Grain className="[mask-image:linear-gradient(to_left,black,transparent)]" />
       </div>
