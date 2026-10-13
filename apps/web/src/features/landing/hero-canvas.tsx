@@ -11,24 +11,24 @@ type Point = [number, number]
  *  swell near the track) with a dashed orbit, and a car of red light lapping it. The car slows
  *  into corners, because its speed follows the track's curvature.
  *
- *  Two canvases keep scrolling smooth: the static field is drawn once per resize, and each
- *  frame only clears and redraws the car on its own layer. No canvas blur filters per frame and
- *  no CSS mask (both make the browser repaint the full hero while you scroll); the bottom fade
- *  and the clearing behind the headline are painted into the pixels instead. No CSS gradient
- *  layer sits over the hero either: Chrome draws a faint gradient on near-black in visible
- *  8-bit steps (rings, and a hard line far from the centre). */
+ *  No canvas covers the hero. Chrome on macOS composited the old full-hero canvases with a
+ *  hard, lighter band across the lower quarter of the screen on some displays, so:
+ *  - the static field is drawn once per resize off screen and shown as a plain image;
+ *  - the car gets a canvas only as big as the orbit around the track.
+ *  The bottom fade and the clearing behind the headline are painted into the pixels (no CSS
+ *  mask or gradient layer: Chrome draws a faint gradient on near-black in visible steps). */
 export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
-  const field = useRef<HTMLCanvasElement>(null)
+  const box = useRef<HTMLDivElement>(null)
+  const image = useRef<HTMLImageElement>(null)
   const car = useRef<HTMLCanvasElement>(null)
   const reduce = useReducedMotion()
   const shapes = useQuery(circuitShapesQuery())
   const shape = shapes.data?.[circuit]
 
   useEffect(() => {
-    const [fieldEl, carEl] = [field.current, car.current]
-    const fieldCtx = fieldEl?.getContext('2d')
+    const [boxEl, imageEl, carEl] = [box.current, image.current, car.current]
     const ctx = carEl?.getContext('2d')
-    if (!fieldEl || !carEl || !fieldCtx || !ctx || !shape || shape.x.length < 3) return
+    if (!boxEl || !imageEl || !carEl || !ctx || !shape || shape.x.length < 3) return
     const path = rotate(
       shape.x.map((x, i): Point => [x, shape.y[i] ?? 0]),
       shape.rotation,
@@ -40,31 +40,65 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
     let last = performance.now()
     let fit: Fit = { scale: 1, dx: 0, dy: 0 }
     let [w, h] = [0, 0]
+    let area: Rect = { x: 0, y: 0, w: 0, h: 0 }
+    let url = ''
+    let generation = 0
 
     const size = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      ;[w, h] = [fieldEl.clientWidth, fieldEl.clientHeight]
-      for (const c of [fieldEl, carEl]) {
-        c.width = w * dpr
-        c.height = h * dpr
-      }
-      fieldCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      ;[w, h] = [boxEl.clientWidth, boxEl.clientHeight]
+      if (!w || !h) return
       fit = fitTo(path, w, h)
-      drawField(fieldCtx, path, fit, w, h)
-      fadeBottom(fieldCtx, w, h)
-      clearBehindText(fieldCtx, w, h)
+      paintField(path, fit, w, h, dpr, ++generation)
+      // The car's canvas covers the orbit and a margin for its glow, nothing more.
+      area = carArea(
+        path.map((p) => at(p, fit)),
+        w,
+        h,
+      )
+      Object.assign(carEl.style, {
+        left: `${area.x}px`,
+        top: `${area.y}px`,
+        width: `${area.w}px`,
+        height: `${area.h}px`,
+      })
+      carEl.width = Math.round(area.w * dpr)
+      carEl.height = Math.round(area.h * dpr)
+      // Draw in hero coordinates; the transform moves them into the canvas.
+      ctx.setTransform(dpr, 0, 0, dpr, -area.x * dpr, -area.y * dpr)
     }
+
+    /** Draws the field off screen and swaps it into the image when the bitmap is ready. */
+    const paintField = (p: Point[], f: Fit, fw: number, fh: number, dpr: number, gen: number) => {
+      const offscreen = document.createElement('canvas')
+      offscreen.width = Math.round(fw * dpr)
+      offscreen.height = Math.round(fh * dpr)
+      const fieldCtx = offscreen.getContext('2d')
+      if (!fieldCtx) return
+      fieldCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      drawField(fieldCtx, p, f, fw, fh)
+      fadeBottom(fieldCtx, fw, fh)
+      clearBehindText(fieldCtx, fw, fh)
+      offscreen.toBlob((blob) => {
+        // A later resize may have started a newer field; keep only the latest.
+        if (!blob || gen !== generation) return
+        const next = URL.createObjectURL(blob)
+        imageEl.src = next
+        if (url) URL.revokeObjectURL(url)
+        url = next
+      })
+    }
+
     size()
     const observer = new ResizeObserver(size)
-    observer.observe(fieldEl)
+    observer.observe(boxEl)
     const seen = new IntersectionObserver(([entry]) => {
       visible = !!entry?.isIntersecting
     })
-    seen.observe(fieldEl)
+    seen.observe(boxEl)
 
     const draw = (now: number) => {
-      ctx.clearRect(0, 0, w, h)
+      ctx.clearRect(area.x, area.y, area.w, area.h)
       if (reduce) {
         drawTrail(ctx, path, fit, path.length * 0.35, Math.round(path.length * 0.28))
       } else {
@@ -90,15 +124,39 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
       cancelAnimationFrame(frame)
       observer.disconnect()
       seen.disconnect()
+      generation++
+      if (url) URL.revokeObjectURL(url)
     }
   }, [shape, reduce])
 
   return (
-    <>
-      <canvas ref={field} aria-hidden className="absolute inset-0 size-full" />
-      <canvas ref={car} aria-hidden className="absolute inset-0 size-full" />
-    </>
+    <div ref={box} aria-hidden className="absolute inset-0">
+      {/* eslint-disable-next-line @next/next/no-img-element -- a runtime-drawn bitmap */}
+      <img ref={image} alt="" className="absolute inset-0 size-full" />
+      <canvas ref={car} className="absolute" />
+    </div>
   )
+}
+
+interface Rect {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+/** The orbit's bounding box plus room for the car's glow, kept inside the hero. */
+function carArea(screen: Point[], w: number, h: number): Rect {
+  const { cx, cy, radius } = orbitOf(screen)
+  const pad = 32
+  const x = Math.max(0, Math.floor(cx - radius - pad))
+  const y = Math.max(0, Math.floor(cy - radius - pad))
+  return {
+    x,
+    y,
+    w: Math.min(w, Math.ceil(cx + radius + pad)) - x,
+    h: Math.min(h, Math.ceil(cy + radius + pad)) - y,
+  }
 }
 
 /** Fades the lowest 30% of a layer to transparent, as the old CSS mask did. */
@@ -225,14 +283,7 @@ function drawField(ctx: CanvasRenderingContext2D, path: Point[], f: Fit, w: numb
     }
   }
   // A dashed orbit around the circuit.
-  const xs = screen.map((p) => p[0])
-  const ys = screen.map((p) => p[1])
-  const [cx, cy] = [
-    (Math.min(...xs) + Math.max(...xs)) / 2,
-    (Math.min(...ys) + Math.max(...ys)) / 2,
-  ]
-  const radius =
-    (Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) / 2) * ORBIT
+  const { cx, cy, radius } = orbitOf(screen)
   ctx.setLineDash([3, 9])
   ctx.strokeStyle = 'rgba(255,255,255,0.22)'
   ctx.lineWidth = 1
@@ -240,6 +291,23 @@ function drawField(ctx: CanvasRenderingContext2D, path: Point[], f: Fit, w: numb
   ctx.arc(cx, cy, radius, 0, Math.PI * 2)
   ctx.stroke()
   ctx.setLineDash([])
+}
+
+/** The dashed orbit: a circle round the circuit's on-screen extent. */
+function orbitOf(screen: Point[]): { cx: number; cy: number; radius: number } {
+  const xs = screen.map((p) => p[0])
+  const ys = screen.map((p) => p[1])
+  const [minX, maxX, minY, maxY] = [
+    Math.min(...xs),
+    Math.max(...xs),
+    Math.min(...ys),
+    Math.max(...ys),
+  ]
+  return {
+    cx: (minX + maxX) / 2,
+    cy: (minY + maxY) / 2,
+    radius: (Math.max(maxX - minX, maxY - minY) / 2) * ORBIT,
+  }
 }
 
 /** Shortest distance from a point to the closed polyline. */
