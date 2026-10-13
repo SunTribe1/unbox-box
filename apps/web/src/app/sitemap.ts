@@ -2,7 +2,7 @@ import { VIEWS } from '@unbox-box/tools'
 import type { MetadataRoute } from 'next'
 import { VIEW_SLUG } from '@/lib/routes'
 import { loadSeoSource } from '@/lib/seo/load-source'
-import { seoPages } from '@/lib/seo/pages'
+import { sitemapPages } from '@/lib/seo/pages'
 import { SITE_URL } from '@/lib/site'
 
 export const dynamic = 'force-static'
@@ -15,9 +15,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: `${BASE}/`, priority: 1 },
     ...VIEWS.map((v) => ({ url: `${BASE}/${VIEW_SLUG[v]}/`, priority: 0.8 })),
-    ...seoPages(loadSeoSource()).map((p) => ({
+    ...sitemapPages(loadSeoSource()).map((p) => ({
       url: `${BASE}${p.path}`,
-      priority: 0.6,
+      priority: p.priority,
       ...(p.date && { lastModified: p.date }),
     })),
     { url: `${BASE}/credits/`, priority: 0.3 },

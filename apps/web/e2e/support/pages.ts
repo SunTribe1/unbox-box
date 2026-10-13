@@ -27,6 +27,8 @@ export const PAGES: readonly {
 
 /** Waits for the page's proof of life: a heading, or (for Lap Duel) the pole time. */
 export async function ready(page: Page, entry: (typeof PAGES)[number]) {
+  // The prerendered HTML shows headings before the app hydrates; wait for the app itself.
+  await expect(page.locator('html[data-hydrated]')).toHaveCount(1)
   const target = entry.text
     ? page.getByText(entry.ready).first()
     : page.getByRole('heading', { name: entry.ready, exact: true }).first()

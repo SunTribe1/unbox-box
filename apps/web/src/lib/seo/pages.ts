@@ -1,6 +1,15 @@
 import type { HistoryIndex, HistoryResults, SessionSummary, View } from '@unbox-box/tools'
-import { VIEW_SLUG } from '../routes'
+import { historyLookup, pathOf, type SeoContent } from './content'
+import {
+  circuitContent,
+  driverContent,
+  type HistoryContext,
+  raceContent,
+  teamContent,
+} from './content-history'
+import { sessionContent } from './content-session'
 import { breadcrumbs, type JsonLd, personLd, placeLd, sportsEventLd, teamLd } from './json-ld'
+import type { SeoSessionDetail } from './session-source'
 
 /**
  * One prerendered page per race weekend, driver, team, circuit and session, so each can be
@@ -13,6 +22,8 @@ export interface SeoSource {
   sessions: SessionSummary[]
   history: HistoryIndex
   results: HistoryResults
+  /** Per-session facts for the session pages; missing ones get no summary tables. */
+  details: Map<string, SeoSessionDetail>
 }
 
 export interface SeoPage {
@@ -27,11 +38,11 @@ export interface SeoPage {
   /** Last change, for the sitemap (ISO date). */
   date?: string
   jsonLd: JsonLd[]
+  /** The visible summary prerendered into the page (see content.ts). */
+  content: SeoContent
 }
 
 const SITE_NAME = 'Unbox Box'
-
-const pathOf = (view: View, segments: string[]) => `/${[VIEW_SLUG[view], ...segments].join('/')}/`
 
 function page(
   view: View,
@@ -40,6 +51,7 @@ function page(
   description: string,
   entity: JsonLd | null,
   viewTitle: string,
+  content: SeoContent,
   date?: string,
 ): SeoPage {
   const path = pathOf(view, segments)
@@ -56,6 +68,7 @@ function page(
     description,
     ...(date && { date }),
     jsonLd: entity ? [entity, trail] : [trail],
+    content,
   }
 }
 
@@ -75,7 +88,15 @@ function podiumHeads(results: HistoryResults) {
   return { winner, pole }
 }
 
-export function racePages({ history: h, results }: SeoSource): SeoPage[] {
+const contextOf = ({ history, results, sessions }: SeoSource): HistoryContext => ({
+  h: history,
+  r: results,
+  lookup: historyLookup(history, results, sessions),
+})
+
+export function racePages(source: SeoSource): SeoPage[] {
+  const { history: h, results } = source
+  const ctx = contextOf(source)
   const { winner, pole } = podiumHeads(results)
   const r = h.races
   return r.year.map((year, i) => {
@@ -104,14 +125,18 @@ export function racePages({ history: h, results }: SeoSource): SeoPage[] {
       // No sitemap date: <lastmod> is when the page last changed, not when the race ran, and
       // search engines reject dates before 1970.
       'Race Archive',
+      raceContent(ctx, i),
     )
   })
 }
 
-export function driverPages({ history: h }: SeoSource): SeoPage[] {
+export function driverPages(source: SeoSource): SeoPage[] {
+  const { history: h } = source
+  const ctx = contextOf(source)
   return h.drivers
-    .filter((d) => d.starts > 0)
-    .map((d) => {
+    .map((d, i) => ({ d, i }))
+    .filter(({ d }) => d.starts > 0)
+    .map(({ d, i }) => {
       const span = years(d.firstYear, d.lastYear)
       const titles = d.titles ? `, ${plural(d.titles, 'world title')}` : ''
       const description = `${d.name}'s Formula 1 career${span ? ` (${span})` : ''}: ${plural(d.starts, 'start')}, ${plural(d.wins, 'win')}, ${plural(d.podiums, 'podium')}, ${plural(d.poles, 'pole')}${titles}. Season-by-season results, teammates and head-to-heads.`
@@ -123,14 +148,18 @@ export function driverPages({ history: h }: SeoSource): SeoPage[] {
         description,
         personLd(d, pathOf('history', segments)),
         'History Explorer',
+        driverContent(ctx, i),
       )
     })
 }
 
-export function teamPages({ history: h }: SeoSource): SeoPage[] {
+export function teamPages(source: SeoSource): SeoPage[] {
+  const { history: h } = source
+  const ctx = contextOf(source)
   return h.constructors
-    .filter((t) => (t.starts ?? 0) > 0)
-    .map((t) => {
+    .map((t, i) => ({ t, i }))
+    .filter(({ t }) => (t.starts ?? 0) > 0)
+    .map(({ t, i }) => {
       const titles = t.titles ? `, ${plural(t.titles, 'constructors’ title')}` : ''
       const description = `${t.fullName ?? t.name} in Formula 1: ${plural(t.starts ?? 0, 'start')}, ${plural(t.wins ?? 0, 'win')}, ${plural(t.podiums ?? 0, 'podium')}, ${plural(t.poles ?? 0, 'pole')}${titles}. Drivers, seasons, engines and every name the team raced under.`
       const segments = ['teams', t.id]
@@ -141,12 +170,15 @@ export function teamPages({ history: h }: SeoSource): SeoPage[] {
         description,
         teamLd(t, pathOf('history', segments)),
         'History Explorer',
+        teamContent(ctx, i),
       )
     })
 }
 
-export function circuitPages({ history: h }: SeoSource): SeoPage[] {
-  return h.circuits.map((c) => {
+export function circuitPages(source: SeoSource): SeoPage[] {
+  const { history: h } = source
+  const ctx = contextOf(source)
+  return h.circuits.map((c, i) => {
     const size = [c.length && `${c.length} km`, c.turns && plural(c.turns, 'turn')]
       .filter(Boolean)
       .join(', ')
@@ -158,13 +190,17 @@ export function circuitPages({ history: h }: SeoSource): SeoPage[] {
       description,
       placeLd(c, pathOf('circuits', [c.id])),
       'Circuits',
+      circuitContent(ctx, i),
     )
   })
 }
 
 /** Telemetry for every session, plus strategy and a replay for each race. */
-export function sessionPages({ sessions }: SeoSource): SeoPage[] {
+export function sessionPages(source: SeoSource): SeoPage[] {
+  const { sessions, details } = source
+  const ctx = contextOf(source)
   return sessions.flatMap((s) => {
+    const detail = details.get(s.id)
     const event = `${s.season} ${s.event}`
     const date = s.date ?? undefined
     const about = sportsEventLd({ name: event, date: s.date, path: null, circuitName: s.circuit })
@@ -175,6 +211,7 @@ export function sessionPages({ sessions }: SeoSource): SeoPage[] {
       `F1 telemetry analysis for the ${event} ${s.session.toLowerCase()} at ${s.circuit}: compare any two laps corner by corner, with speed, throttle, brake, gear and the running gap.`,
       about,
       'Lap Duel',
+      sessionContent(ctx, s, 'lap-duel', detail),
       date,
     )
     if (s.session !== 'Race') return [duel]
@@ -187,6 +224,7 @@ export function sessionPages({ sessions }: SeoSource): SeoPage[] {
         `Tyre strategy for the ${event}: every stint, pit stop and compound, tyre degradation, undercuts and a race simulator to test other strategies.`,
         about,
         'Strategy Lab',
+        sessionContent(ctx, s, 'strategy', detail),
         date,
       ),
       page(
@@ -196,6 +234,7 @@ export function sessionPages({ sessions }: SeoSource): SeoPage[] {
         `Replay the ${event} lap by lap on the track map, with a live timing tower, gaps, pit stops and race control messages.`,
         about,
         'Race Replay',
+        sessionContent(ctx, s, 'replay', detail),
         date,
       ),
     ]
@@ -210,4 +249,45 @@ export function seoPages(source: SeoSource): SeoPage[] {
     ...teamPages(source),
     ...circuitPages(source),
   ]
+}
+
+/** The most recent season each page covers: a session's or race's year, a driver's or
+ *  team's last season, a circuit's last race. */
+function recency(source: SeoSource): (p: SeoPage) => number {
+  const { h, r, lookup } = contextOf(source)
+  const lastYear = (rows: number[] | undefined) =>
+    Math.max(0, ...(rows ?? []).map((row) => h.races.year[r.race[row]!]!))
+  const drivers = new Map(h.drivers.map((d) => [d.id, d.lastYear ?? 0]))
+  const teams = new Map(h.constructors.map((t, i) => [t.id, lastYear(lookup.rowsByTeam.get(i))]))
+  const circuits = new Map(
+    h.circuits.map((c, i) => [
+      c.id,
+      Math.max(0, ...(lookup.racesByCircuit.get(i) ?? []).map((race) => h.races.year[race]!)),
+    ]),
+  )
+  return (p) => {
+    const [first = '', second = ''] = p.segments
+    if (p.view === 'races' || p.view === 'lap-duel' || p.view === 'strategy' || p.view === 'replay')
+      return Number(first.slice(0, 4)) || 0
+    if (p.view === 'circuits') return circuits.get(first) ?? 0
+    return (first === 'drivers' ? drivers.get(second) : teams.get(second)) ?? 0
+  }
+}
+
+export interface SitemapPage extends SeoPage {
+  priority: number
+}
+
+/** Pages for the sitemap, most recent first, so a new site's limited crawl reaches what people
+ *  search for (this season, today's drivers and circuits) before the 1950s archive. */
+export function sitemapPages(source: SeoSource): SitemapPage[] {
+  const yearOf = recency(source)
+  const latest = source.history.latestSeason
+  return seoPages(source)
+    .map((p) => ({ p, year: yearOf(p) }))
+    .sort((a, b) => b.year - a.year)
+    .map(({ p, year }) => ({
+      ...p,
+      priority: year >= latest - 3 ? 0.7 : year >= latest - 20 ? 0.5 : 0.3,
+    }))
 }

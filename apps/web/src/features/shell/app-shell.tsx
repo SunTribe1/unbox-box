@@ -135,7 +135,13 @@ function CurrentView({ heading }: { heading: string | null }) {
   return <View />
 }
 
-export function AppShell({ page }: { page?: PageHeading }) {
+interface AppShellProps {
+  page?: PageHeading
+  /** The prerendered page's summary (SeoSummary), shown while the address stays on it. */
+  summary?: React.ReactNode
+}
+
+export function AppShell({ page, summary }: AppShellProps) {
   const onPage = useOnPage(page)
   const heading = onPage && page ? page.heading : null
   useBootstrap()
@@ -164,6 +170,7 @@ export function AppShell({ page }: { page?: PageHeading }) {
             <div key={view} className="animate-view-in">
               <CurrentView heading={heading} />
             </div>
+            {onPage && summary}
             <footer className="mt-8 border-t pt-4 pb-2 text-[11px] leading-relaxed text-faint-foreground">
               {DISCLAIMER_SHORT} All other names are trade marks of their respective owners, who do
               not endorse this app. Data: TracingInsights (MIT, Apache-2.0), F1DB (CC BY 4.0).
