@@ -528,15 +528,6 @@
   );
 }
 
-/* A floor of light under a closing section. */
-@utility glow-floor {
-  background: radial-gradient(
-    60% 60% at 50% 100%,
-    oklch(from var(--glow) l c h / 20%),
-    transparent 70%
-  );
-}
-
 /* A red glowing underline that fades in on hover and keyboard focus (landing nav). */
 @utility glow-underline {
   position: relative;

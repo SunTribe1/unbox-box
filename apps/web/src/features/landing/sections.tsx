@@ -9,6 +9,7 @@ import { DISCLAIMER_SHORT } from '@/lib/legal'
 import { REPO_URL } from '@/lib/site'
 import { EASE_OUT } from '@/lib/motion'
 import { AppWindow, Tag } from './decor'
+import { GlowCanvas } from './glow-canvas'
 import { LoopVideo } from './loop-video'
 import { useEnterApp } from './use-enter-app'
 
@@ -126,6 +127,16 @@ export function AskSection() {
   )
 }
 
+/** A floor of red light under the closing section: 20% at the bottom centre, gone by 70% out. */
+const FLOOR = {
+  at: [0.5, 1],
+  size: [0.6, 0.6],
+  stops: [
+    [0, 0.2],
+    [0.7, 0],
+  ],
+} as const
+
 export function FinalCta() {
   const enter = useEnterApp()
   return (
@@ -133,7 +144,7 @@ export function FinalCta() {
       aria-labelledby="final-title"
       className="relative isolate flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col justify-center overflow-hidden bg-background py-28 text-center text-white sm:py-36"
     >
-      <div className="absolute inset-0 -z-10 glow-floor" />
+      <GlowCanvas {...FLOOR} className="-z-10" />
       <m.div {...reveal} className="mx-auto max-w-2xl px-5">
         <h2 id="final-title" className="text-headline">
           Lights out. Data on.
