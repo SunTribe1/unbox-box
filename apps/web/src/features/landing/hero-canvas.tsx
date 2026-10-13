@@ -14,7 +14,9 @@ type Point = [number, number]
  *  Two canvases keep scrolling smooth: the static field is drawn once per resize, and each
  *  frame only clears and redraws the car on its own layer. No canvas blur filters per frame and
  *  no CSS mask (both make the browser repaint the full hero while you scroll); the bottom fade
- *  is painted into the pixels instead. */
+ *  and the clearing behind the headline are painted into the pixels instead. No CSS gradient
+ *  layer sits over the hero either: Chrome draws a faint gradient on near-black in visible
+ *  8-bit steps (rings, and a hard line far from the centre). */
 export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
   const field = useRef<HTMLCanvasElement>(null)
   const car = useRef<HTMLCanvasElement>(null)
@@ -51,6 +53,7 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
       fit = fitTo(path, w, h)
       drawField(fieldCtx, path, fit, w, h)
       fadeBottom(fieldCtx, w, h)
+      clearBehindText(fieldCtx, w, h)
     }
     size()
     const observer = new ResizeObserver(size)
@@ -72,6 +75,7 @@ export function HeroCanvas({ circuit = 'monza' }: { circuit?: string }) {
         drawTrail(ctx, path, fit, t, Math.round(path.length * 0.28))
       }
       fadeBottom(ctx, w, h)
+      clearBehindText(ctx, w, h)
       last = now
     }
 
@@ -106,6 +110,22 @@ function fadeBottom(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.globalCompositeOperation = 'destination-in'
   ctx.fillStyle = fade
   ctx.fillRect(0, 0, w, h)
+  ctx.restore()
+}
+
+/** Erases the field behind the headline: fully clear near the text, fading back in towards the
+ *  track. An ellipse at 12% / 55% with radii of 90% × 75% of the hero, clear to 30% of the way
+ *  out, untouched from 72%. Only the sparse dots and lines are affected, so no banding shows. */
+function clearBehindText(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  const clear = ctx.createRadialGradient(0, 0, 0, 0, 0, 1)
+  clear.addColorStop(0.3, 'rgba(0,0,0,1)')
+  clear.addColorStop(0.72, 'rgba(0,0,0,0)')
+  ctx.save()
+  ctx.globalCompositeOperation = 'destination-out'
+  ctx.translate(w * 0.12, h * 0.55)
+  ctx.scale(w * 0.9, h * 0.75)
+  ctx.fillStyle = clear
+  ctx.fillRect(-2, -2, 4, 4)
   ctx.restore()
 }
 
