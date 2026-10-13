@@ -131,7 +131,7 @@ export function FinalCta() {
   return (
     <section
       aria-labelledby="final-title"
-      className="relative isolate flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col justify-center overflow-hidden bg-brand-ink py-28 text-center text-white sm:py-36"
+      className="relative isolate flex min-h-[calc(100svh-4rem)] scroll-mt-16 flex-col justify-center overflow-hidden bg-background py-28 text-center text-white sm:py-36"
     >
       <div className="absolute inset-0 -z-10 glow-floor" />
       <m.div {...reveal} className="mx-auto max-w-2xl px-5">
